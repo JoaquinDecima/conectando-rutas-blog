@@ -6,6 +6,7 @@
 @theme {
   --color-white: #fff;
   --color-black: #000;
+  --color-primary: #deb574;
 }
 
 @layer base {
