@@ -1,146 +1,159 @@
 ---
+import Icon from './Icon.astro';
+import HeaderLink from './HeaderLink.astro';
 import { getCollection } from 'astro:content';
-import { SITE_TITLE } from '../consts';
+import { NAV_LINKS, SOCIAL_LINKS, SITE_TITLE } from '../consts';
 
 const posts = (await getCollection('blog'))
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-  .slice(0, 10);
+	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+	.slice(0, 10);
 ---
 
-<div class="topbar bg-primary text-white text-xs py-1.5 overflow-hidden">
-  <div class="mx-auto flex max-w-7xl items-center px-4 sm:px-6 lg:px-8">
-    <div class="flex-1 overflow-hidden relative marquee-wrapper">
-      <div class="marquee-track flex w-max whitespace-nowrap" aria-label="Últimas publicaciones">
-        <span class="marquee-content">
-          <span class="inline-flex items-center gap-2 mr-4">
-            <i class="fas fa-newspaper text-white/80"></i>
-            <span class="font-medium">Últimos:</span>
-          </span>
-          {posts.map((post, i) => (
-            <span class="inline mx-3">
-              <a href={`/blog/${post.id}/`} class="text-white/90 hover:text-white transition-colors">{post.data.title}</a>
-              {i < posts.length - 1 && <span class="ml-3 text-white/40">•</span>}
-            </span>
-          ))}
-        </span>
-        <span class="marquee-content">
-          <span class="inline-flex items-center gap-2 mr-4">
-            <i class="fas fa-newspaper text-white/80"></i>
-            <span class="font-medium">Últimos:</span>
-          </span>
-          {posts.map((post, i) => (
-            <span class="inline mx-3">
-              <a href={`/blog/${post.id}/`} class="text-white/90 hover:text-white transition-colors">{post.data.title}</a>
-              {i < posts.length - 1 && <span class="ml-3 text-white/40">•</span>}
-            </span>
-          ))}
-        </span>
-      </div>
-    </div>
-    <div class="flex items-center gap-3 ml-4 pl-4 border-l border-white/20 shrink-0">
-      <a href="#" target="_blank" class="text-white/70 hover:text-white transition-colors" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
-      <a href="#" target="_blank" class="text-white/70 hover:text-white transition-colors" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-      <a href="#" target="_blank" class="text-white/70 hover:text-white transition-colors" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
-    </div>
-  </div>
+<div class="bg-accent-solid-strong text-accent-on-solid-strong text-xs">
+	<div class="mx-auto flex max-w-6xl items-center px-4 py-1.5 sm:px-6">
+		<div class="marquee-wrapper relative flex-1 overflow-hidden" aria-label="Últimas publicaciones">
+			<div class="marquee-track flex w-max whitespace-nowrap">
+				{
+					[false, true].map((hidden) => (
+						<span class="marquee-content" aria-hidden={hidden || undefined}>
+							<span class="mr-4 inline-flex items-center gap-2 font-medium">
+								<Icon name="feed" size={12} />
+								<span>Últimos:</span>
+							</span>
+							{posts.map((post, i) => (
+								<span class="mx-3 inline">
+									<a
+										href={`/blog/${post.id}/`}
+										class="transition-colors duration-100 hover:text-neutral-on-background-strong"
+									>
+										{post.data.title}
+									</a>
+									{i < posts.length - 1 && <span class="ml-3 opacity-40">•</span>}
+								</span>
+							))}
+						</span>
+					))
+				}
+			</div>
+		</div>
+		<div class="ml-4 flex shrink-0 items-center gap-3 border-l border-accent-on-solid-weak pl-4">
+			{
+				SOCIAL_LINKS.map((social) => (
+					<a
+						href={social.href}
+						target="_blank"
+						rel="noopener"
+						class="transition-opacity duration-100 hover:opacity-70"
+						aria-label={social.label}
+					>
+						<Icon name={social.icon} size={14} />
+					</a>
+				))
+			}
+		</div>
+	</div>
 </div>
 
-<header class="sticky top-0 z-50 w-full border-b border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-gray-950/80 backdrop-blur-md transition-colors duration-300">
-  <nav class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
-    <a href="/" class="text-xl font-bold text-gray-900 dark:text-white hover:text-primary transition-colors">
-      {SITE_TITLE}
-    </a>
+<header
+	class="sticky top-0 z-50 w-full border-b border-neutral-alpha-weak bg-page/80 backdrop-blur-md"
+	style="backdrop-filter: var(--backdrop-filter)"
+>
+	<nav class="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
+		<a
+			href="/"
+			class="flex items-center gap-2 font-heading text-heading-s text-neutral-on-background-strong transition-colors duration-100 hover:text-accent-on-background-weak"
+		>
+			<Icon name="compass" size={20} class="text-accent-on-background-weak" strokeWidth={1.75} />
+			<span>{SITE_TITLE}</span>
+		</a>
 
-    <div class="hidden md:flex items-center gap-6">
-      <a href="/" class="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary transition-colors">Inicio</a>
-      <a href="/blog" class="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary transition-colors">Blog</a>
-      <a href="/about" class="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary transition-colors">Nosotros</a>
-    </div>
+		<div class="hidden items-center gap-6 md:flex">
+			{NAV_LINKS.map((link) => <HeaderLink href={link.href}>{link.label}</HeaderLink>)}
+		</div>
 
-    <div class="flex items-center gap-3">
-      <button id="theme-toggle" class="flex items-center justify-center w-9 h-9 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-primary/10 transition-colors" aria-label="Cambiar tema">
-        <i class="fas fa-moon dark:fa-sun text-sm"></i>
-      </button>
+		<div class="flex items-center gap-2">
+			<button
+				id="theme-toggle"
+				class="flex h-9 w-9 items-center justify-center rounded-full text-neutral-on-background-medium transition-colors duration-100 hover:bg-neutral-alpha-weak hover:text-neutral-on-background-strong"
+				aria-label="Cambiar tema"
+			>
+				<Icon name="sun" size={16} class="hidden dark:block" />
+				<Icon name="moon" size={16} class="dark:hidden" />
+			</button>
 
-      <button id="menu-toggle" class="flex md:hidden items-center justify-center w-9 h-9 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-primary/10 transition-colors" aria-label="Abrir menú">
-        <i class="fas fa-bars text-sm"></i>
-      </button>
-    </div>
-  </nav>
+			<button
+				id="menu-toggle"
+				class="flex h-9 w-9 items-center justify-center rounded-full text-neutral-on-background-medium transition-colors duration-100 hover:bg-neutral-alpha-weak hover:text-neutral-on-background-strong md:hidden"
+				aria-label="Abrir menú"
+			>
+				<Icon name="menu" size={16} class="menu-open-icon" />
+				<Icon name="close" size={16} class="menu-close-icon hidden" />
+			</button>
+		</div>
+	</nav>
 
-  <div id="mobile-menu" class="hidden md:hidden border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 transition-colors duration-300">
-    <div class="flex flex-col px-4 py-3 space-y-2">
-      <a href="/" class="py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary transition-colors">Inicio</a>
-      <a href="/blog" class="py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary transition-colors">Blog</a>
-      <a href="/about" class="py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary transition-colors">Nosotros</a>
-    </div>
-  </div>
+	<div id="mobile-menu" class="hidden border-t border-neutral-alpha-weak bg-page md:hidden">
+		<div class="flex flex-col px-4 py-3">
+			{
+				NAV_LINKS.map((link) => (
+					<a
+						href={link.href}
+						class="py-2 text-label-m text-neutral-on-background-medium transition-colors duration-100 hover:text-neutral-on-background-strong"
+					>
+						{link.label}
+					</a>
+				))
+			}
+		</div>
+	</div>
 </header>
 
 <style>
-  .marquee-wrapper {
-    mask-image: linear-gradient(to right, transparent, black 2%, black 98%, transparent);
-    -webkit-mask-image: linear-gradient(to right, transparent, black 2%, black 98%, transparent);
-  }
-  .marquee-track {
-    display: flex;
-    width: max-content;
-    animation: scroll 40s linear infinite;
-  }
-  .marquee-wrapper:hover .marquee-track {
-    animation-play-state: paused;
-  }
-  @keyframes scroll {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
-  }
+	.marquee-wrapper {
+		mask-image: linear-gradient(to right, transparent, black 2%, black 98%, transparent);
+		-webkit-mask-image: linear-gradient(to right, transparent, black 2%, black 98%, transparent);
+	}
+	.marquee-track {
+		animation: scroll 40s linear infinite;
+	}
+	.marquee-wrapper:hover .marquee-track {
+		animation-play-state: paused;
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.marquee-track {
+			animation: none;
+		}
+	}
+	@keyframes scroll {
+		0% {
+			transform: translateX(0);
+		}
+		100% {
+			transform: translateX(-50%);
+		}
+	}
 </style>
 
 <script>
-  const themeToggle = document.getElementById('theme-toggle');
-  const menuToggle = document.getElementById('menu-toggle');
-  const mobileMenu = document.getElementById('mobile-menu');
-  const html = document.documentElement;
-  const moonIcon = themeToggle?.querySelector('i');
+	const themeToggle = document.getElementById('theme-toggle');
+	const menuToggle = document.getElementById('menu-toggle');
+	const mobileMenu = document.getElementById('mobile-menu');
+	const html = document.documentElement;
 
-  function getStoredTheme() {
-    return localStorage.getItem('theme');
-  }
+	themeToggle?.addEventListener('click', () => {
+		const next = html.dataset.theme === 'dark' ? 'light' : 'dark';
+		html.dataset.theme = next;
+		localStorage.setItem('theme', next);
+	});
 
-  function getSystemTheme() {
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-  }
-
-  function setTheme(theme) {
-    if (theme === 'dark') {
-      html.classList.add('dark');
-    } else {
-      html.classList.remove('dark');
-    }
-    localStorage.setItem('theme', theme);
-    if (moonIcon) {
-      moonIcon.className = theme === 'dark' ? 'fas fa-sun text-sm' : 'fas fa-moon text-sm';
-    }
-  }
-
-  const saved = getStoredTheme();
-  if (saved) {
-    setTheme(saved);
-  } else {
-    setTheme(getSystemTheme());
-  }
-
-  themeToggle?.addEventListener('click', () => {
-    const current = html.classList.contains('dark') ? 'dark' : 'light';
-    setTheme(current === 'dark' ? 'light' : 'dark');
-  });
-
-  menuToggle?.addEventListener('click', () => {
-    const isOpen = !mobileMenu?.classList.contains('hidden');
-    mobileMenu?.classList.toggle('hidden', isOpen);
-    const icon = menuToggle.querySelector('i');
-    if (icon) {
-      icon.className = isOpen ? 'fas fa-bars text-sm' : 'fas fa-times text-sm';
-    }
-  });
+	menuToggle?.addEventListener('click', () => {
+		const isOpen = !mobileMenu?.classList.contains('hidden');
+		mobileMenu?.classList.toggle('hidden', isOpen);
+		menuToggle
+			.querySelector('.menu-open-icon')
+			?.classList.toggle('hidden', !isOpen);
+		menuToggle
+			.querySelector('.menu-close-icon')
+			?.classList.toggle('hidden', isOpen);
+	});
 </script>

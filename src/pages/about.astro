@@ -1,63 +1,65 @@
 ---
-import AboutHeroImage from '../assets/blog-placeholder-about.jpg';
-import Layout from '../layouts/BlogPost.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 ---
 
-<Layout
-	title="About Me"
-	description="Lorem ipsum dolor sit amet"
-	pubDate={new Date('August 08 2021')}
-	heroImage={AboutHeroImage}
->
-	<p>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-		labore et dolore magna aliqua. Vitae ultricies leo integer malesuada nunc vel risus commodo
-		viverra. Adipiscing enim eu turpis egestas pretium. Euismod elementum nisi quis eleifend quam
-		adipiscing. In hac habitasse platea dictumst vestibulum. Sagittis purus sit amet volutpat. Netus
-		et malesuada fames ac turpis egestas. Eget magna fermentum iaculis eu non diam phasellus
-		vestibulum lorem. Varius sit amet mattis vulputate enim. Habitasse platea dictumst quisque
-		sagittis. Integer quis auctor elit sed vulputate mi. Dictumst quisque sagittis purus sit amet.
-	</p>
+<BaseLayout title={`Nosotros - ${SITE_TITLE}`} description={SITE_DESCRIPTION}>
+	<section class="mx-auto max-w-3xl px-4 py-16 sm:px-6">
+		<div class="text-center">
+			<p class="text-label-s text-accent-on-background-weak">Nosotros</p>
+			<h1 class="mt-1 font-heading text-display-s font-light text-neutral-on-background-strong">
+				Viajar es conectar
+			</h1>
+			<p class="mx-auto mt-4 max-w-xl text-body-m text-neutral-on-background-medium">
+				{SITE_DESCRIPTION}
+			</p>
+		</div>
 
-	<p>
-		Morbi tristique senectus et netus. Id semper risus in hendrerit gravida rutrum quisque non
-		tellus. Habitasse platea dictumst quisque sagittis purus sit amet. Tellus molestie nunc non
-		blandit massa. Cursus vitae congue mauris rhoncus. Accumsan tortor posuere ac ut. Fringilla urna
-		porttitor rhoncus dolor. Elit ullamcorper dignissim cras tincidunt lobortis. In cursus turpis
-		massa tincidunt dui ut ornare lectus. Integer feugiat scelerisque varius morbi enim nunc.
-		Bibendum neque egestas congue quisque egestas diam. Cras ornare arcu dui vivamus arcu felis
-		bibendum. Dignissim suspendisse in est ante in nibh mauris. Sed tempus urna et pharetra pharetra
-		massa massa ultricies mi.
-	</p>
+		<div class="mt-12 space-y-6 text-body-m text-neutral-on-background-medium">
+			<p>
+				Conectando Rutas nació de una idea simple: los mejores viajes no son los que más
+				lugares acumulan, sino los que mejor conectan experiencias, personas y paisajes.
+				Desde 2022 documentamos las rutas que recorremos para que tú puedas planificar las
+				tuyas con información real y actualizada.
+			</p>
+			<p>
+				Cada artículo que publicamos parte de un viaje hecho en primera persona: medimos
+				distancias, probamos transportes, dormimos en los alojamientos que recomendamos y
+				anotamos cada detalle que nos habría gustado saber antes de salir.
+			</p>
+			<p>
+				Nuestro compromiso es contigo: sin contenidos patrocinados disfrazados de guías, sin
+				inflar expectativas. Solo rutas honestas, presupuestos reales y el deseo de que el
+				mundo te siga sorprendiendo kilómetro a kilómetro.
+			</p>
+		</div>
 
-	<p>
-		Mollis nunc sed id semper risus in. Convallis a cras semper auctor neque. Diam sit amet nisl
-		suscipit. Lacus viverra vitae congue eu consequat ac felis donec. Egestas integer eget aliquet
-		nibh praesent tristique magna sit amet. Eget magna fermentum iaculis eu non diam. In vitae
-		turpis massa sed elementum. Tristique et egestas quis ipsum suspendisse ultrices. Eget lorem
-		dolor sed viverra ipsum. Vel turpis nunc eget lorem dolor sed viverra. Posuere ac ut consequat
-		semper viverra nam. Laoreet suspendisse interdum consectetur libero id faucibus. Diam phasellus
-		vestibulum lorem sed risus ultricies tristique. Rhoncus dolor purus non enim praesent elementum
-		facilisis. Ultrices tincidunt arcu non sodales neque. Tempus egestas sed sed risus pretium quam
-		vulputate. Viverra suspendisse potenti nullam ac tortor vitae purus faucibus ornare. Fringilla
-		urna porttitor rhoncus dolor purus non. Amet dictum sit amet justo donec enim.
-	</p>
+		<div class="mt-12 grid gap-4 sm:grid-cols-3">
+			{
+				[
+				{ value: '120+', label: 'Rutas documentadas' },
+				{ value: '18', label: 'Países recorridos' },
+				{ value: '2022', label: 'Viajando y escribiendo desde' },
+				].map((stat) => (
+					<div class="rounded-l border border-neutral-alpha-weak bg-neutral-background-weak p-6 text-center">
+						<p class="font-heading text-heading-xl font-light text-accent-on-background-weak">
+							{stat.value}
+						</p>
+						<p class="mt-1 text-label-s text-neutral-on-background-weak">{stat.label}</p>
+					</div>
+				))
+			}
+		</div>
 
-	<p>
-		Mattis ullamcorper velit sed ullamcorper morbi tincidunt. Tortor posuere ac ut consequat semper
-		viverra. Tellus mauris a diam maecenas sed enim ut sem viverra. Venenatis urna cursus eget nunc
-		scelerisque viverra mauris in. Arcu ac tortor dignissim convallis aenean et tortor at. Curabitur
-		gravida arcu ac tortor dignissim convallis aenean et tortor. Egestas tellus rutrum tellus
-		pellentesque eu. Fusce ut placerat orci nulla pellentesque dignissim enim sit amet. Ut enim
-		blandit volutpat maecenas volutpat blandit aliquam etiam. Id donec ultrices tincidunt arcu. Id
-		cursus metus aliquam eleifend mi.
-	</p>
-
-	<p>
-		Tempus quam pellentesque nec nam aliquam sem. Risus at ultrices mi tempus imperdiet. Id porta
-		nibh venenatis cras sed felis eget velit. Ipsum a arcu cursus vitae. Facilisis magna etiam
-		tempor orci eu lobortis elementum. Tincidunt dui ut ornare lectus sit. Quisque non tellus orci
-		ac. Blandit libero volutpat sed cras. Nec tincidunt praesent semper feugiat nibh sed pulvinar
-		proin gravida. Egestas integer eget aliquet nibh praesent tristique magna.
-	</p>
-</Layout>
+		<div class="mt-12 text-center">
+			<a
+				href="/blog"
+				class="inline-flex items-center gap-2 rounded-full bg-accent-solid-strong px-5 py-2.5 text-label-m font-medium text-accent-on-solid-strong transition-colors duration-100 hover:bg-accent-solid-medium"
+			>
+				Leer el blog
+				<Icon name="arrow-right" size={16} />
+			</a>
+		</div>
+	</section>
+</BaseLayout>

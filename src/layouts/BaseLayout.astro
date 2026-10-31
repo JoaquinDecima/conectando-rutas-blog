@@ -1,0 +1,45 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+
+interface Props {
+	title: string;
+	description: string;
+	image?: import('astro').ImageMetadata;
+}
+
+const { title, description, image } = Astro.props;
+---
+
+<!doctype html>
+<html
+	lang="es"
+	data-neutral="gray"
+	data-accent="custom"
+	data-border="playful"
+	data-surface="translucent"
+>
+	<head>
+		<BaseHead title={title} description={description} image={image} />
+		<script is:inline>
+			(() => {
+				const stored = localStorage.getItem('theme');
+				const theme =
+					stored === 'light' || stored === 'dark'
+						? stored
+						: matchMedia('(prefers-color-scheme: dark)').matches
+							? 'dark'
+							: 'light';
+				document.documentElement.dataset.theme = theme;
+			})();
+		</script>
+	</head>
+	<body class="flex min-h-screen flex-col bg-page text-neutral-on-background-strong">
+		<Header />
+		<main class="flex-1">
+			<slot />
+		</main>
+		<Footer />
+	</body>
+</html>

@@ -1,0 +1,35 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "instructions": ["AGENTS.md"],
+  "default_agent": "router",
+  "agent": {
+    "build": {
+      "disable": true
+    },
+    "router": {
+      "description": "Punto de entrada: analiza cada tarea y la delega al especialista correcto",
+      "mode": "all",
+      "color": "#deb574"
+    },
+    "designer": {
+      "description": "Diseño con sistema Once UI (tokens, componentes, accesibilidad visual)",
+      "mode": "subagent",
+      "color": "#7c9cff"
+    },
+    "astro-dev": {
+      "description": "Desarrollo Astro 6 + Tailwind 4: páginas, layouts, componentes y build",
+      "mode": "subagent",
+      "color": "#ff8a5c"
+    },
+    "editor": {
+      "description": "Edición de artículos del blog (frontmatter y contenido en español)",
+      "mode": "subagent",
+      "color": "#7cd992"
+    },
+    "seo": {
+      "description": "SEO técnico estático: meta tags, Open Graph, schema, sitemap y RSS",
+      "mode": "subagent",
+      "color": "#ff7ca8"
+    }
+  }
+}

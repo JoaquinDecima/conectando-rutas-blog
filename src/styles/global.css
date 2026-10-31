@@ -1,16 +1,492 @@
-@import "tailwindcss";
-@import "@fortawesome/fontawesome-free/css/all.css";
+/*
+ * ONCE UI design tokens — port of @once-ui-system/core tokens.css
+ * Do NOT use raw hex/oklch colors in components. Always use tokens.
+ * Theme switching happens via [data-theme="light" | "dark"] on <html>.
+ */
+@import 'tailwindcss';
+@import '@fontsource-variable/geist';
+@import '@fontsource-variable/geist-mono';
 
-@custom-variant dark (&:where(.dark, .dark *));
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
 
-@theme {
-  --color-white: #fff;
-  --color-black: #000;
-  --color-primary: #deb574;
+:root {
+  /* Static */
+  --static-transparent: #00000000;
+  --static-white: #ffffff;
+  --static-white-medium: #ffffff4d;
+  --static-black: #000000;
+  --static-black-medium: #0000004d;
+
+  /* Scheme: neutral (gray) */
+  --scheme-neutral-100: oklch(0.1448 0 0);
+  --scheme-neutral-200: oklch(0.1957 0 0);
+  --scheme-neutral-300: oklch(0.3677 0 0);
+  --scheme-neutral-400: oklch(0.464 0 0);
+  --scheme-neutral-500: oklch(0.5624 0 0);
+  --scheme-neutral-600: oklch(0.6698 0 0);
+  --scheme-neutral-700: oklch(0.7636 0 0);
+  --scheme-neutral-800: oklch(0.8638 0 0);
+  --scheme-neutral-900: oklch(0.9067 0 0);
+  --scheme-neutral-1000: oklch(0.9461 0 0);
+  --scheme-neutral-1100: oklch(0.9642 0 0);
+  --scheme-neutral-1200: oklch(0.9821 0 0);
+  --scheme-neutral-600-15: oklch(0.6698 0 0 / 0.15);
+  --scheme-neutral-600-30: oklch(0.6698 0 0 / 0.3);
+  --scheme-neutral-600-50: oklch(0.6698 0 0 / 0.5);
+
+  /* Scheme: accent (custom brand gold #deb574) */
+  --scheme-accent-100: oklch(0.2 0.015 78.25);
+  --scheme-accent-200: oklch(0.28 0.03 78.25);
+  --scheme-accent-300: oklch(0.42 0.055 78.25);
+  --scheme-accent-400: oklch(0.58 0.085 78.25);
+  --scheme-accent-500: oklch(0.7954 0.0955 78.25);
+  --scheme-accent-600: oklch(0.85 0.07 78.25);
+  --scheme-accent-700: oklch(0.89 0.055 78.25);
+  --scheme-accent-800: oklch(0.92 0.042 78.25);
+  --scheme-accent-900: oklch(0.945 0.03 78.25);
+  --scheme-accent-1000: oklch(0.96 0.022 78.25);
+  --scheme-accent-1100: oklch(0.973 0.016 78.25);
+  --scheme-accent-1200: oklch(0.985 0.011 78.25);
+  --scheme-accent-600-15: oklch(0.7954 0.0955 78.25 / 0.15);
+  --scheme-accent-600-30: oklch(0.7954 0.0955 78.25 / 0.3);
+  --scheme-accent-600-50: oklch(0.7954 0.0955 78.25 / 0.5);
+
+  /* Function (brand is aliased to accent: single gold identity) */
+  --function-neutral-100: var(--scheme-neutral-100);
+  --function-neutral-200: var(--scheme-neutral-200);
+  --function-neutral-300: var(--scheme-neutral-300);
+  --function-neutral-400: var(--scheme-neutral-400);
+  --function-neutral-500: var(--scheme-neutral-500);
+  --function-neutral-600: var(--scheme-neutral-600);
+  --function-neutral-700: var(--scheme-neutral-700);
+  --function-neutral-800: var(--scheme-neutral-800);
+  --function-neutral-900: var(--scheme-neutral-900);
+  --function-neutral-1000: var(--scheme-neutral-1000);
+  --function-neutral-1100: var(--scheme-neutral-1100);
+  --function-neutral-1200: var(--scheme-neutral-1200);
+  --function-neutral-600-15: var(--scheme-neutral-600-15);
+  --function-neutral-600-30: var(--scheme-neutral-600-30);
+  --function-neutral-600-50: var(--scheme-neutral-600-50);
+  --function-accent-100: var(--scheme-accent-100);
+  --function-accent-200: var(--scheme-accent-200);
+  --function-accent-300: var(--scheme-accent-300);
+  --function-accent-400: var(--scheme-accent-400);
+  --function-accent-500: var(--scheme-accent-500);
+  --function-accent-600: var(--scheme-accent-600);
+  --function-accent-700: var(--scheme-accent-700);
+  --function-accent-800: var(--scheme-accent-800);
+  --function-accent-900: var(--scheme-accent-900);
+  --function-accent-1000: var(--scheme-accent-1000);
+  --function-accent-1100: var(--scheme-accent-1100);
+  --function-accent-1200: var(--scheme-accent-1200);
+  --function-accent-600-15: var(--scheme-accent-600-15);
+  --function-accent-600-30: var(--scheme-accent-600-30);
+  --function-accent-600-50: var(--scheme-accent-600-50);
+
+  /* Space */
+  --static-space-0: 0;
+  --static-space-1: 1px;
+  --static-space-2: 0.125rem;
+  --static-space-4: 0.25rem;
+  --static-space-8: 0.5rem;
+  --static-space-12: 0.75rem;
+  --static-space-16: 1rem;
+  --static-space-20: 1.25rem;
+  --static-space-24: 1.5rem;
+  --static-space-32: 2rem;
+  --static-space-40: 2.5rem;
+  --static-space-48: 3rem;
+  --static-space-56: 3.5rem;
+  --static-space-64: 4rem;
+  --static-space-80: 5rem;
+  --static-space-128: 8rem;
+  --header-height: var(--static-space-56);
+
+  /* Radius — Once UI `border: playful` */
+  --radius-xs: 0.25rem;
+  --radius-s: 0.5rem;
+  --radius-m: 0.75rem;
+  --radius-l: 1rem;
+  --radius-xl: 1.25rem;
+  --radius-full: 999rem;
+
+  /* Shadows */
+  --shadow-xs: 0px 0px 1px rgb(0 0 0 / 0.12), 0px 1px 2px rgb(0 0 0 / 0.08), 0px 2px 4px rgb(0 0 0 / 0.08);
+  --shadow-s: 0px 0px 2px rgb(0 0 0 / 0.12), 0px 1px 4px rgb(0 0 0 / 0.08), 0px 4px 8px rgb(0 0 0 / 0.08);
+  --shadow-m: 0px 0px 2px rgb(0 0 0 / 0.12), 0px 2px 4px rgb(0 0 0 / 0.08), 0px 8px 8px rgb(0 0 0 / 0.08);
+  --shadow-l: 0px 2px 4px rgb(0 0 0 / 0.12), 0px 8px 12px rgb(0 0 0 / 0.08), 0px 8px 16px rgb(0 0 0 / 0.08);
+  --shadow-xl: 0px 4px 4px rgb(0 0 0 / 0.12), 0px 8px 12px rgb(0 0 0 / 0.08), 0px 24px 24px rgb(0 0 0 / 0.08);
+
+  /* Typography */
+  --font-heading: 'Geist Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-body: 'Geist Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-label: 'Geist Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-code: 'Geist Mono Variable', ui-monospace, 'SF Mono', monospace;
+  --font-weight-heading-default: 400;
+  --font-weight-heading-strong: 600;
+  --font-weight-display-default: 300;
+  --font-weight-label-default: 400;
+  --font-weight-label-strong: 600;
+  --font-size-display-xl: 5rem;
+  --font-size-display-l: 4rem;
+  --font-size-display-m: 3rem;
+  --font-size-display-s: 2.5rem;
+  --font-size-display-xs: 2rem;
+  --font-size-heading-xl: 1.5rem;
+  --font-size-heading-l: 1.33rem;
+  --font-size-heading-m: 1.25rem;
+  --font-size-heading-s: 1.125rem;
+  --font-size-heading-xs: 1rem;
+  --font-size-body-l: 1.125rem;
+  --font-size-body-m: 1rem;
+  --font-size-body-s: 0.875rem;
+  --font-size-body-xs: 0.75rem;
+  --font-size-label-l: 1rem;
+  --font-size-label-m: 0.925rem;
+  --font-size-label-s: 0.825rem;
+  --font-size-label-xs: 0.75rem;
+  --line-height-display-xl: 5rem;
+  --line-height-display-l: 4.25rem;
+  --line-height-display-m: 3.25rem;
+  --line-height-display-s: 3rem;
+  --line-height-display-xs: 2.5rem;
+  --line-height-heading-xl: 2rem;
+  --line-height-heading-l: 1.75rem;
+  --line-height-heading-m: 1.5rem;
+  --line-height-heading-s: 1.5rem;
+  --line-height-heading-xs: 1.25rem;
+  --line-height-body-l: 1.5rem;
+  --line-height-body-m: 1.5rem;
+  --line-height-body-s: 1.125rem;
+  --line-height-body-xs: 1rem;
+  --line-height-label-l: 1.25rem;
+  --line-height-label-m: 1.25rem;
+  --line-height-label-s: 1rem;
+  --line-height-label-xs: 0.875rem;
+
+  /* Transitions — Once UI micro */
+  --transition-eased: ease-in-out;
+  --transition-micro-short: all 0.1s ease-in-out;
+  --transition-micro-medium: all 0.2s ease-in-out;
+  --transition-micro-long: all 0.4s ease-in-out;
+
+  /* Surface — Once UI `surface: translucent` */
+  --backdrop-filter: blur(1rem);
+  --surface-border: var(--neutral-alpha-medium);
+  --surface-background: var(--static-white-medium);
+  --default-border: var(--neutral-alpha-weak);
+}
+
+/* Mobile typography scale (Once UI responsive display sizes) */
+@media (max-width: 768px) {
+  :root {
+    --font-size-display-xl: 2.75rem;
+    --font-size-display-l: 2.5rem;
+    --font-size-display-m: 2.25rem;
+    --font-size-display-s: 2rem;
+    --line-height-display-xl: 3rem;
+    --line-height-display-l: 2.75rem;
+    --line-height-display-m: 2.5rem;
+    --line-height-display-s: 2.5rem;
+  }
+}
+
+/* Semantic tokens — LIGHT (Once UI light mapping) */
+[data-theme='light'] {
+  --page-background: var(--function-neutral-1200);
+  --surface-background: var(--static-white-medium);
+  --neutral-background-strong: var(--function-neutral-800);
+  --neutral-background-medium: var(--function-neutral-1000);
+  --neutral-background-weak: var(--static-white);
+  --neutral-on-background-strong: var(--function-neutral-100);
+  --neutral-on-background-medium: var(--function-neutral-300);
+  --neutral-on-background-weak: var(--function-neutral-400);
+  --neutral-border-strong: var(--function-neutral-800);
+  --neutral-border-medium: var(--function-neutral-900);
+  --neutral-border-weak: var(--function-neutral-1000);
+  --neutral-alpha-strong: var(--function-neutral-600-50);
+  --neutral-alpha-medium: var(--function-neutral-600-30);
+  --neutral-alpha-weak: var(--function-neutral-600-15);
+  --accent-background-strong: var(--function-accent-800);
+  --accent-background-medium: var(--function-accent-1000);
+  --accent-background-weak: var(--static-white);
+  --accent-on-background-strong: var(--function-accent-100);
+  --accent-on-background-medium: var(--function-accent-400);
+  --accent-on-background-weak: var(--function-accent-400);
+  --accent-solid-strong: var(--function-accent-500);
+  --accent-solid-medium: var(--function-accent-400);
+  --accent-solid-weak: var(--function-accent-300);
+  --accent-on-solid-strong: var(--static-white);
+  --accent-on-solid-medium: var(--function-accent-1100);
+  --accent-on-solid-weak: var(--function-accent-1000);
+  --accent-border-strong: var(--function-accent-800);
+  --accent-border-medium: var(--function-accent-900);
+  --accent-border-weak: var(--function-accent-1000);
+  --accent-alpha-strong: var(--function-accent-600-50);
+  --accent-alpha-medium: var(--function-accent-600-30);
+  --accent-alpha-weak: var(--function-accent-600-15);
+}
+
+/* Semantic tokens — DARK (Once UI dark mapping) */
+[data-theme='dark'] {
+  --page-background: var(--neutral-background-weak);
+  --surface-background: var(--static-black-medium);
+  --neutral-background-strong: var(--function-neutral-300);
+  --neutral-background-medium: var(--function-neutral-200);
+  --neutral-background-weak: var(--function-neutral-100);
+  --neutral-on-background-strong: var(--static-white);
+  --neutral-on-background-medium: var(--function-neutral-900);
+  --neutral-on-background-weak: var(--function-neutral-700);
+  --neutral-border-strong: var(--function-neutral-400);
+  --neutral-border-medium: var(--function-neutral-300);
+  --neutral-border-weak: var(--function-neutral-200);
+  --neutral-alpha-strong: var(--function-neutral-600-50);
+  --neutral-alpha-medium: var(--function-neutral-600-30);
+  --neutral-alpha-weak: var(--function-neutral-600-15);
+  --accent-background-strong: var(--function-accent-300);
+  --accent-background-medium: var(--function-accent-200);
+  --accent-background-weak: var(--function-accent-100);
+  --accent-on-background-strong: var(--static-white);
+  --accent-on-background-medium: var(--function-accent-900);
+  --accent-on-background-weak: var(--function-accent-700);
+  --accent-solid-strong: var(--function-accent-500);
+  --accent-solid-medium: var(--function-accent-400);
+  --accent-solid-weak: var(--function-accent-300);
+  --accent-on-solid-strong: var(--static-white);
+  --accent-on-solid-medium: var(--function-accent-1000);
+  --accent-on-solid-weak: var(--function-accent-900);
+  --accent-border-strong: var(--function-accent-400);
+  --accent-border-medium: var(--function-accent-300);
+  --accent-border-weak: var(--function-accent-200);
+  --accent-alpha-strong: var(--function-accent-600-50);
+  --accent-alpha-medium: var(--function-accent-600-30);
+  --accent-alpha-weak: var(--function-accent-600-15);
+}
+
+/*
+ * Once UI → Tailwind mapping.
+ * Utility names mirror Once UI token names 1:1 so any agent can map
+ * token -> utility and utility -> token without guessing.
+ */
+@theme inline {
+  --color-page: var(--page-background);
+  --color-surface: var(--surface-background);
+  --color-neutral-background-weak: var(--neutral-background-weak);
+  --color-neutral-background-medium: var(--neutral-background-medium);
+  --color-neutral-background-strong: var(--neutral-background-strong);
+  --color-neutral-on-background-strong: var(--neutral-on-background-strong);
+  --color-neutral-on-background-medium: var(--neutral-on-background-medium);
+  --color-neutral-on-background-weak: var(--neutral-on-background-weak);
+  --color-neutral-border-weak: var(--neutral-border-weak);
+  --color-neutral-border-medium: var(--neutral-border-medium);
+  --color-neutral-border-strong: var(--neutral-border-strong);
+  --color-neutral-alpha-weak: var(--neutral-alpha-weak);
+  --color-neutral-alpha-medium: var(--neutral-alpha-medium);
+  --color-neutral-alpha-strong: var(--neutral-alpha-strong);
+  --color-accent-background-weak: var(--accent-background-weak);
+  --color-accent-background-medium: var(--accent-background-medium);
+  --color-accent-background-strong: var(--accent-background-strong);
+  --color-accent-on-background-strong: var(--accent-on-background-strong);
+  --color-accent-on-background-medium: var(--accent-on-background-medium);
+  --color-accent-on-background-weak: var(--accent-on-background-weak);
+  --color-accent-solid-weak: var(--accent-solid-weak);
+  --color-accent-solid-medium: var(--accent-solid-medium);
+  --color-accent-solid-strong: var(--accent-solid-strong);
+  --color-accent-on-solid-strong: var(--accent-on-solid-strong);
+  --color-accent-on-solid-medium: var(--accent-on-solid-medium);
+  --color-accent-on-solid-weak: var(--accent-on-solid-weak);
+  --color-accent-border-weak: var(--accent-border-weak);
+  --color-accent-border-medium: var(--accent-border-medium);
+  --color-accent-border-strong: var(--accent-border-strong);
+  --color-accent-alpha-weak: var(--accent-alpha-weak);
+  --color-accent-alpha-medium: var(--accent-alpha-medium);
+  --color-accent-alpha-strong: var(--accent-alpha-strong);
+
+  --font-heading: var(--font-heading);
+  --font-body: var(--font-body);
+  --font-label: var(--font-label);
+  --font-code: var(--font-code);
+
+  --text-display-xl: var(--font-size-display-xl);
+  --text-display-xl--line-height: var(--line-height-display-xl);
+  --text-display-l: var(--font-size-display-l);
+  --text-display-l--line-height: var(--line-height-display-l);
+  --text-display-m: var(--font-size-display-m);
+  --text-display-m--line-height: var(--line-height-display-m);
+  --text-display-s: var(--font-size-display-s);
+  --text-display-s--line-height: var(--line-height-display-s);
+  --text-display-xs: var(--font-size-display-xs);
+  --text-display-xs--line-height: var(--line-height-display-xs);
+  --text-heading-xl: var(--font-size-heading-xl);
+  --text-heading-xl--line-height: var(--line-height-heading-xl);
+  --text-heading-l: var(--font-size-heading-l);
+  --text-heading-l--line-height: var(--line-height-heading-l);
+  --text-heading-m: var(--font-size-heading-m);
+  --text-heading-m--line-height: var(--line-height-heading-m);
+  --text-heading-s: var(--font-size-heading-s);
+  --text-heading-s--line-height: var(--line-height-heading-s);
+  --text-heading-xs: var(--font-size-heading-xs);
+  --text-heading-xs--line-height: var(--line-height-heading-xs);
+  --text-body-l: var(--font-size-body-l);
+  --text-body-l--line-height: var(--line-height-body-l);
+  --text-body-m: var(--font-size-body-m);
+  --text-body-m--line-height: var(--line-height-body-m);
+  --text-body-s: var(--font-size-body-s);
+  --text-body-s--line-height: var(--line-height-body-s);
+  --text-body-xs: var(--font-size-body-xs);
+  --text-body-xs--line-height: var(--line-height-body-xs);
+  --text-label-l: var(--font-size-label-l);
+  --text-label-l--line-height: var(--line-height-label-l);
+  --text-label-m: var(--font-size-label-m);
+  --text-label-m--line-height: var(--line-height-label-m);
+  --text-label-s: var(--font-size-label-s);
+  --text-label-s--line-height: var(--line-height-label-s);
+  --text-label-xs: var(--font-size-label-xs);
+  --text-label-xs--line-height: var(--line-height-label-xs);
+
+  --radius-xs: var(--radius-xs);
+  --radius-s: var(--radius-s);
+  --radius-m: var(--radius-m);
+  --radius-l: var(--radius-l);
+  --radius-xl: var(--radius-xl);
+  --radius-full: var(--radius-full);
+
+  --shadow-xs: var(--shadow-xs);
+  --shadow-s: var(--shadow-s);
+  --shadow-m: var(--shadow-m);
+  --shadow-l: var(--shadow-l);
+  --shadow-xl: var(--shadow-xl);
 }
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
-    @apply bg-white text-gray-900 dark:bg-gray-950 dark:text-gray-100 transition-colors duration-300;
+    font-family: var(--font-body);
+    font-size: var(--font-size-body-m);
+    line-height: var(--line-height-body-m);
+    background-color: var(--page-background);
+    color: var(--neutral-on-background-strong);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background-color: var(--accent-alpha-medium);
+    color: var(--neutral-on-background-strong);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  /* Once UI-style article typography (no typography plugin: keep CSS lean) */
+  .article-body {
+    color: var(--neutral-on-background-medium);
+    font-size: var(--font-size-body-l);
+    line-height: 1.75;
+  }
+
+  .article-body > * + * {
+    margin-top: var(--static-space-24);
+  }
+
+  .article-body h2,
+  .article-body h3,
+  .article-body h4 {
+    color: var(--neutral-on-background-strong);
+    font-family: var(--font-heading);
+    font-weight: var(--font-weight-heading-default);
+    line-height: var(--line-height-heading-m);
+    margin-top: var(--static-space-48);
+  }
+
+  .article-body h2 {
+    font-size: var(--font-size-heading-xl);
+  }
+
+  .article-body h3 {
+    font-size: var(--font-size-heading-l);
+  }
+
+  .article-body h4 {
+    font-size: var(--font-size-heading-m);
+  }
+
+  .article-body a {
+    color: var(--accent-on-background-weak);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+    transition: var(--transition-micro-short);
+  }
+
+  .article-body a:hover {
+    color: var(--accent-on-background-strong);
+  }
+
+  .article-body ul,
+  .article-body ol {
+    padding-left: var(--static-space-32);
+    display: flex;
+    flex-direction: column;
+    gap: var(--static-space-8);
+  }
+
+  .article-body ul {
+    list-style: disc;
+  }
+
+  .article-body ol {
+    list-style: decimal;
+  }
+
+  .article-body blockquote {
+    border-left: 2px solid var(--accent-border-medium);
+    padding-left: var(--static-space-16);
+    color: var(--neutral-on-background-strong);
+    font-style: italic;
+  }
+
+  .article-body :not(pre) > code {
+    font-family: var(--font-code);
+    font-size: var(--font-size-body-s);
+    background-color: var(--neutral-alpha-weak);
+    border: 1px solid var(--neutral-alpha-weak);
+    border-radius: var(--radius-xs);
+    padding: 0.125rem var(--static-space-4);
+  }
+
+  .article-body pre {
+    background-color: var(--neutral-background-strong);
+    border: 1px solid var(--neutral-alpha-weak);
+    border-radius: var(--radius-s);
+    padding: var(--static-space-16);
+    overflow-x: auto;
+  }
+
+  .article-body pre code {
+    font-family: var(--font-code);
+    font-size: var(--font-size-body-s);
+    color: var(--neutral-on-background-medium);
+  }
+
+  .article-body img {
+    border-radius: var(--radius-l);
+    border: 1px solid var(--neutral-alpha-weak);
+  }
+
+  .article-body hr {
+    border-color: var(--neutral-alpha-weak);
   }
 }

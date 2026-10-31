@@ -1,10 +1,8 @@
 ---
 import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
-import BaseHead from '../../components/BaseHead.astro';
-import Footer from '../../components/Footer.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
-import Header from '../../components/Header.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
 
 const posts = (await getCollection('blog')).sort(
@@ -12,38 +10,48 @@ const posts = (await getCollection('blog')).sort(
 );
 ---
 
-<!doctype html>
-<html lang="es">
-	<head>
-		<BaseHead title={`Blog - ${SITE_TITLE}`} description={SITE_DESCRIPTION} />
-	</head>
-	<body>
-		<Header />
-		<main class="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
-			<div class="text-center mb-12">
-				<h1 class="text-3xl font-bold mb-2">Blog</h1>
-				<p class="text-gray-500 dark:text-gray-400">Últimos artículos</p>
-			</div>
-			<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-				{posts.map((post) => (
-					<article class="rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden bg-white dark:bg-gray-900 transition-colors duration-300">
-						<a href={`/blog/${post.id}/`} class="block group">
+<BaseLayout title={`Blog - ${SITE_TITLE}`} description={SITE_DESCRIPTION}>
+	<section class="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+		<div class="text-center">
+			<p class="text-label-s text-accent-on-background-weak">Blog</p>
+			<h1 class="mt-1 font-heading text-display-s font-light text-neutral-on-background-strong">
+				Todas las rutas y artículos
+			</h1>
+			<p class="mx-auto mt-4 max-w-xl text-body-m text-neutral-on-background-medium">
+				Guías, itinerarios y consejos de viaje publicados por el equipo de Conectando Rutas.
+			</p>
+		</div>
+
+		<div class="mt-12 grid gap-6 sm:grid-cols-2">
+			{
+				posts.map((post) => (
+					<article class="group overflow-hidden rounded-l border border-neutral-alpha-weak bg-neutral-background-weak transition-colors duration-100 hover:border-neutral-border-medium">
+						<a href={`/blog/${post.id}/`} class="block">
 							{post.data.heroImage && (
-								<div class="overflow-hidden">
-									<Image width={720} height={360} src={post.data.heroImage} alt="" class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500" />
-								</div>
+								<Image
+									width={720}
+									height={360}
+									src={post.data.heroImage}
+									alt=""
+									class="aspect-2/1 w-full object-cover"
+									loading="lazy"
+								/>
 							)}
 							<div class="p-5">
-								<p class="text-sm text-gray-500 dark:text-gray-400 mb-2">
+								<p class="text-label-s text-neutral-on-background-weak">
 									<FormattedDate date={post.data.pubDate} />
 								</p>
-								<h4 class="text-lg font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{post.data.title}</h4>
+								<h2 class="mt-2 font-heading text-heading-s text-neutral-on-background-strong transition-colors duration-100 group-hover:text-accent-on-background-weak">
+									{post.data.title}
+								</h2>
+								<p class="mt-2 line-clamp-2 text-body-s text-neutral-on-background-medium">
+									{post.data.description}
+								</p>
 							</div>
 						</a>
 					</article>
-				))}
-			</div>
-		</main>
-		<Footer />
-	</body>
-</html>
+				))
+			}
+		</div>
+	</section>
+</BaseLayout>
