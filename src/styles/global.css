@@ -3,6 +3,7 @@
  * Do NOT use raw hex/oklch colors in components. Always use tokens.
  * Theme switching happens via [data-theme="light" | "dark"] on <html>.
  */
+@layer theme, base, components, utilities;
 @import 'tailwindcss';
 @import '@fontsource-variable/geist';
 @import '@fontsource-variable/geist-mono';
@@ -490,3 +491,4 @@
     border-color: var(--neutral-alpha-weak);
   }
 }
+

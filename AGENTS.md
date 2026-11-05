@@ -95,8 +95,9 @@ Reglas por orden de impacto:
 4. **Imágenes**: siempre `<Image>` de `astro:assets` con `width`/`height` explícitos (evita CLS). Hero de post: `loading="eager" fetchpriority="high"`; resto `loading="lazy"`. Formato final webp automático.
 5. **CSS**: un único `global.css` importado desde `BaseHead.astro`. Evitar CSS duplicado; estilos de artículo en `.article-body` (no usar plugin de tipografía).
 6. **Animaciones**: solo `transform`/`opacity`, duraciones `--transition-micro-*`, y respetar `prefers-reduced-motion`.
-7. **Astro config**: mantener `output` estático por defecto, sitemap + RSS activos. No añadir SSR/adaptadores salvo necesidad real.
-8. Presupuesto objetivo: cada página debe seguir construyéndose sin JS en caliente y con HTML+CSS mínimos. Si una feature exige mucho JS, proponer alternativa estática primero.
+7. **Mapas**: SVG propio generado en build (`scripts/generate-map-data.ts`, datos Natural Earth + OSRM committeados en `src/data/map-data.json`), estilizado con tokens; nunca librerías de mapas en runtime (Leaflet, Mapbox…), nunca iframes ni tiles externos; los pins son links SVG y el toggle de capas es CSS puro; atribución OSM en el caption.
+8. **Astro config**: mantener `output` estático por defecto, sitemap + RSS activos. No añadir SSR/adaptadores salvo necesidad real.
+9. Presupuesto objetivo: cada página debe seguir construyéndose sin JS en caliente y con HTML+CSS mínimos. Si una feature exige mucho JS, proponer alternativa estática primero.
 
 ---
 

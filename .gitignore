@@ -3,6 +3,9 @@ dist/
 # generated types
 .astro/
 
+# build script caches (raw OSRM responses)
+.cache/
+
 # dependencies
 node_modules/
 

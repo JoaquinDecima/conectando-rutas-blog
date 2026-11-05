@@ -1,0 +1,82 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PostCard from '../components/PostCard.astro';
+import RouteMap from '../components/RouteMap.astro';
+import { SITE_TITLE } from '../consts';
+
+const posts = (await getCollection('blog'))
+	.filter((post) => post.data.country)
+	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+
+<BaseLayout
+	title={`Nuestro recorrido - ${SITE_TITLE}`}
+	description="Seguí nuestro recorrido por Latinoamérica en el mapa: rutas y puntos que enlazan a los itinerarios, presupuestos y consejos publicados en el blog."
+>
+	<section class="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+		<input type="checkbox" id="toggle-pins" class="sr-only" />
+		<div>
+			<p class="text-label-s text-accent-on-background-weak">El recorrido</p>
+			<h1
+				class="mt-1 font-heading text-display-s font-light text-neutral-on-background-strong"
+			>
+				Nuestras rutas por Latinoamérica
+			</h1>
+			<p class="mt-4 max-w-xl text-body-m text-neutral-on-background-medium">
+				De la Patagonia a la sierra del Perú: este es el recorrido que vamos trazando en
+				familia. Cada punto del mapa enlaza con la historia que lo cuenta.
+			</p>
+		</div>
+
+		<div class="mt-8 flex justify-start md:justify-end">
+			<label
+				for="toggle-pins"
+				class="route-toggle cursor-pointer rounded-full border border-neutral-alpha-strong px-4 py-2 text-label-m font-medium text-neutral-on-background-strong transition-colors duration-100 hover:bg-neutral-alpha-weak"
+			>
+				<span class="toggle-hide">Ocultar puntos</span>
+				<span class="toggle-show hidden">Mostrar puntos</span>
+			</label>
+		</div>
+
+		<RouteMap />
+
+		<section class="mt-16" aria-label="Rutas del blog">
+			<div class="border-b border-neutral-alpha-weak pb-3">
+				<h2 class="font-heading text-heading-m text-neutral-on-background-strong">
+					Rutas del blog
+				</h2>
+			</div>
+			<div class="mt-6 grid gap-6 sm:grid-cols-2">
+				{posts.map((post) => <PostCard post={post} headingLevel="h2" />)}
+			</div>
+		</section>
+	</section>
+</BaseLayout>
+
+<style>
+	/* Toggle de capa de pins en CSS puro: el checkbox vive al nivel de la
+	   sección, así el figure de RouteMap es su hermano y el selector funciona
+	   sin JS. RouteMap es otro componente, por eso el tramo del figure es
+	   :global(). */
+	:global(#toggle-pins:checked ~ figure #map-pins) {
+		display: none;
+	}
+
+	#toggle-pins:checked ~ * .toggle-hide {
+		display: none;
+	}
+
+	#toggle-pins:checked ~ * .toggle-show {
+		display: inline;
+	}
+
+	#toggle-pins:checked ~ * .route-toggle {
+		background-color: var(--neutral-alpha-weak);
+	}
+
+	#toggle-pins:focus-visible ~ * .route-toggle {
+		outline: 2px solid var(--accent-solid-strong);
+		outline-offset: 2px;
+	}
+</style>
