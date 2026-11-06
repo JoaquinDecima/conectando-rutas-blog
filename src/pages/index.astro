@@ -1,14 +1,31 @@
 ---
-import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import FormattedDate from '../components/FormattedDate.astro';
+import PostCard from '../components/PostCard.astro';
 import Icon from '../components/Icon.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import { slugify } from '../utils/slug';
 
-const posts = (await getCollection('blog'))
-	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-	.slice(0, 3);
+const posts = (await getCollection('blog')).sort(
+	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+
+const recentPosts = posts.slice(0, 3);
+
+const countryCounts = new Map<string, { country: string; count: number }>();
+for (const post of posts) {
+	if (!post.data.country) continue;
+	const slug = slugify(post.data.country);
+	const existing = countryCounts.get(slug);
+	if (existing) {
+		existing.count += 1;
+	} else {
+		countryCounts.set(slug, { country: post.data.country, count: 1 });
+	}
+}
+const topCountries = [...countryCounts.entries()]
+	.sort((a, b) => b[1].count - a[1].count || a[1].country.localeCompare(b[1].country))
+	.slice(0, 6);
 
 const highlights = [
 	{
@@ -84,6 +101,40 @@ const highlights = [
 		</div>
 	</section>
 
+	{
+		topCountries.length > 0 && (
+			<section class="mx-auto max-w-6xl px-4 pb-16 sm:px-6" aria-label="Explora por destino">
+				<div class="flex items-end justify-between">
+					<div>
+						<p class="text-label-s text-accent-on-background-weak">Destinos</p>
+						<h2 class="mt-1 font-heading text-heading-xl text-neutral-on-background-strong">
+							Explora por destino
+						</h2>
+					</div>
+					<a
+						href="/destinos"
+						class="hidden items-center gap-1 text-label-m text-neutral-on-background-medium transition-colors duration-100 hover:text-accent-on-background-weak sm:inline-flex"
+					>
+						Ver todos
+						<Icon name="arrow-up-right" size={14} />
+					</a>
+				</div>
+				<div class="mt-6 flex flex-wrap gap-3">
+					{topCountries.map(([slug, { country, count }]) => (
+						<a
+							href={`/destinos/${slug}/`}
+							class="inline-flex items-center gap-2 rounded-full border border-neutral-alpha-weak bg-neutral-background-weak px-4 py-2 text-label-m text-neutral-on-background-strong transition-colors duration-100 hover:border-accent-border-medium hover:text-accent-on-background-weak"
+						>
+							<Icon name="map-pin" size={14} strokeWidth={1.75} />
+							{country}
+							<span class="text-label-s text-neutral-on-background-weak">{count}</span>
+						</a>
+					))}
+				</div>
+			</section>
+		)
+	}
+
 	<section class="mx-auto max-w-6xl px-4 pb-20 sm:px-6" aria-label="Últimas publicaciones">
 		<div class="flex items-end justify-between">
 			<div>
@@ -102,35 +153,50 @@ const highlights = [
 		</div>
 
 		<div class="mt-8 grid gap-6 md:grid-cols-3">
-			{
-				posts.map((post) => (
-					<article class="group overflow-hidden rounded-l border border-neutral-alpha-weak bg-neutral-background-weak transition-colors duration-100 hover:border-neutral-border-medium">
-						<a href={`/blog/${post.id}/`} class="block">
-							{post.data.heroImage && (
-								<Image
-									width={720}
-									height={360}
-									src={post.data.heroImage}
-									alt=""
-									class="aspect-2/1 w-full object-cover"
-									loading="lazy"
-								/>
-							)}
-							<div class="p-5">
-								<p class="text-label-s text-neutral-on-background-weak">
-									<FormattedDate date={post.data.pubDate} />
-								</p>
-								<h3 class="mt-2 font-heading text-heading-s text-neutral-on-background-strong transition-colors duration-100 group-hover:text-accent-on-background-weak">
-									{post.data.title}
-								</h3>
-								<p class="mt-2 line-clamp-2 text-body-s text-neutral-on-background-medium">
-									{post.data.description}
-								</p>
-							</div>
-						</a>
-					</article>
-				))
-			}
+			{recentPosts.map((post) => <PostCard post={post} />)}
+		</div>
+	</section>
+
+	<section
+		class="border-y border-neutral-alpha-weak bg-neutral-background-weak"
+		aria-label="Nuestro recorrido"
+	>
+		<div class="mx-auto max-w-6xl px-4 py-12 sm:px-6">
+			<p class="text-label-s text-accent-on-background-weak">El recorrido</p>
+			<h2 class="mt-1 max-w-xl font-heading text-heading-xl text-neutral-on-background-strong">
+				El mapa de nuestro viaje
+			</h2>
+			<p class="mt-4 max-w-2xl text-body-m text-neutral-on-background-medium">
+				Seguí nuestro recorrido en el mapa: cada punto lleva a una historia.
+			</p>
+			<a
+				href="/rutas"
+				class="mt-6 inline-flex items-center gap-2 rounded-full border border-neutral-alpha-strong px-5 py-2.5 text-label-m font-medium text-neutral-on-background-strong transition-colors duration-100 hover:bg-neutral-alpha-weak"
+			>
+				<Icon name="route" size={16} strokeWidth={1.75} />
+				Ver el mapa
+			</a>
+		</div>
+	</section>
+
+	<section class="border-y border-neutral-alpha-weak bg-neutral-background-weak" aria-label="Sobre nosotros">
+		<div class="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+			<p class="text-label-s text-accent-on-background-weak">Nosotros</p>
+			<h2 class="mt-1 max-w-xl font-heading text-heading-xl text-neutral-on-background-strong">
+				Una familia, una mochila y muchas rutas por delante
+			</h2>
+			<p class="mt-4 max-w-2xl text-body-m text-neutral-on-background-medium">
+				Recién empezamos este proyecto: documentamos cada viaje con distancias reales, gastos
+				honestos y aprendizajes sobre la marcha, para que planificar tu próxima ruta te cueste
+				menos que a nosotros.
+			</p>
+			<a
+				href="/about"
+				class="mt-6 inline-flex items-center gap-2 rounded-full border border-neutral-alpha-strong px-5 py-2.5 text-label-m font-medium text-neutral-on-background-strong transition-colors duration-100 hover:bg-neutral-alpha-weak"
+			>
+				<Icon name="users" size={16} strokeWidth={1.75} />
+				Conócenos
+			</a>
 		</div>
 	</section>
 </BaseLayout>

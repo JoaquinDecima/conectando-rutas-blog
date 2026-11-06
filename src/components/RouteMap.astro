@@ -24,12 +24,12 @@ const [width, height] = map.viewBox;
 <figure
 	class="relative rounded-l border border-neutral-alpha-weak bg-neutral-background-weak p-4 sm:p-6"
 >
-	<svg
-		viewBox={`0 0 ${width} ${height}`}
-		class="mx-auto h-auto w-full max-w-2xl"
-		role="img"
-		aria-label="Mapa de nuestro recorrido por Latinoamérica: líneas de ruta y puntos que enlazan a las historias del blog"
-	>
+		<svg
+			viewBox={`0 0 ${width} ${height}`}
+			class="mx-auto h-auto w-auto max-h-[70vh] max-w-full"
+			role="img"
+			aria-label={`Mapa de nuestro recorrido por ${map.countries.map((c) => c.name).join(' y ')}: líneas de ruta y puntos que enlazan a las historias del blog`}
+		>
 		<g class="map-land" aria-hidden="true">
 			{map.countries.map((country) => <path d={country.d} />)}
 		</g>

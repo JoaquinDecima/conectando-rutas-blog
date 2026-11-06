@@ -1,8 +1,10 @@
 ---
-title: 'Markdown Style Guide'
-description: 'Here is a sample of some basic Markdown syntax that can be used when writing Markdown content in Astro.'
+title: 'Guía de formato Markdown para el blog'
+description: 'Referencia rápida de la sintaxis Markdown que usamos en Conectando Rutas: encabezados, listas, citas, tablas, imágenes y enlaces.'
 pubDate: 'Jun 19 2024'
 heroImage: '../../assets/blog-placeholder-1.jpg'
+category: 'consejos'
+tags: ['recursos']
 ---
 
 Here is a sample of some basic Markdown syntax that can be used when writing Markdown content in Astro.

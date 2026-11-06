@@ -11,21 +11,19 @@ const posts = (await getCollection('blog'))
 ---
 
 <BaseLayout
-	title={`Nuestro recorrido - ${SITE_TITLE}`}
-	description="Seguí nuestro recorrido por Latinoamérica en el mapa: rutas y puntos que enlazan a los itinerarios, presupuestos y consejos publicados en el blog."
+	title={`Nuestras rutas - ${SITE_TITLE}`}
+	description="El recorrido de la familia, punto por punto: cada país y cada pin del mapa enlaza con una historia del blog."
 >
 	<section class="mx-auto max-w-6xl px-4 py-16 sm:px-6">
 		<input type="checkbox" id="toggle-pins" class="sr-only" />
 		<div>
 			<p class="text-label-s text-accent-on-background-weak">El recorrido</p>
-			<h1
-				class="mt-1 font-heading text-display-s font-light text-neutral-on-background-strong"
-			>
-				Nuestras rutas por Latinoamérica
+			<h1 class="mt-1 font-heading text-display-s font-light text-neutral-on-background-strong">
+				Nuestras rutas
 			</h1>
 			<p class="mt-4 max-w-xl text-body-m text-neutral-on-background-medium">
-				De la Patagonia a la sierra del Perú: este es el recorrido que vamos trazando en
-				familia. Cada punto del mapa enlaza con la historia que lo cuenta.
+				Cada país del mapa es una historia que escribimos: pinchá un punto para leer el
+				itinerario, el presupuesto o los consejos de ese tramo del viaje.
 			</p>
 		</div>
 

@@ -1,0 +1,140 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import { SITE_TITLE, SOCIAL_LINKS } from '../consts';
+
+const contactEmail = 'hola@conectandorutas.com';
+
+const inputClasses =
+	'w-full rounded-s border border-neutral-alpha-medium bg-page px-4 py-2.5 text-body-m text-neutral-on-background-strong placeholder:text-neutral-on-background-weak transition-colors duration-100 focus:border-accent-border-strong focus:outline-none';
+const labelClasses = 'text-label-m font-medium text-neutral-on-background-strong';
+---
+
+<BaseLayout
+	title={`Contacto - ${SITE_TITLE}`}
+	description="¿Dudas con una ruta, sugerencias o colaboraciones? Escríbenos y cuéntanos tu viaje. Respondemos todos los mensajes del blog Conectando Rutas."
+>
+	<section class="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+		<div class="max-w-2xl">
+			<p class="text-label-s text-accent-on-background-weak">Contacto</p>
+			<h1
+				class="mt-1 font-heading text-display-s font-light text-neutral-on-background-strong"
+			>
+				Hablemos
+			</h1>
+			<p class="mt-4 text-body-m text-neutral-on-background-medium">
+				¿Tienes dudas sobre una ruta, quieres sugerir un destino o colaborar con el blog?
+				Escríbenos y te respondemos en cuanto volvamos a tener cobertura.
+			</p>
+		</div>
+
+		<div class="mt-12 grid gap-6 lg:grid-cols-5">
+			<form
+				class="rounded-l border border-neutral-alpha-weak bg-neutral-background-weak p-6 sm:p-8 lg:col-span-3"
+				action="https://formspree.io/f/TU-ID-DE-FORMSPREE"
+				method="POST"
+			>
+				<!-- TODO: reemplazar TU-ID-DE-FORMSPREE por el ID real del formulario de Formspree -->
+				<div class="space-y-6">
+					<div>
+						<label for="name" class={labelClasses}>Nombre</label>
+						<input
+							type="text"
+							id="name"
+							name="name"
+							required
+							placeholder="Tu nombre"
+							class={`mt-2 ${inputClasses}`}
+						/>
+					</div>
+					<div>
+						<label for="email" class={labelClasses}>Correo electrónico</label>
+						<input
+							type="email"
+							id="email"
+							name="email"
+							required
+							placeholder="tu@correo.com"
+							class={`mt-2 ${inputClasses}`}
+						/>
+					</div>
+					<div>
+						<label for="message" class={labelClasses}>Mensaje</label>
+						<textarea
+							id="message"
+							name="message"
+							required
+							rows="5"
+							placeholder="Cuéntanos en qué podemos ayudarte"
+							class={`mt-2 ${inputClasses}`}></textarea>
+					</div>
+					<input
+						type="text"
+						name="_gotcha"
+						class="hidden"
+						tabindex="-1"
+						autocomplete="off"
+						aria-hidden="true"
+					/>
+					<button
+						type="submit"
+						class="inline-flex items-center gap-2 rounded-full bg-accent-solid-strong px-5 py-2.5 text-label-m font-medium text-accent-on-solid-strong transition-colors duration-100 hover:bg-accent-solid-medium"
+					>
+						Enviar mensaje
+						<Icon name="send" size={16} />
+					</button>
+				</div>
+			</form>
+
+			<aside class="lg:col-span-2">
+				<div class="rounded-l border border-neutral-alpha-weak bg-neutral-background-weak p-6">
+					<h2 class="font-heading text-heading-m text-neutral-on-background-strong">
+						Otras formas de encontrarnos
+					</h2>
+					<ul class="mt-6 space-y-4">
+						<li class="flex items-center gap-3">
+							<span
+								class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent-alpha-weak text-accent-on-background-weak"
+							>
+								<Icon name="mail" size={16} strokeWidth={1.75} />
+							</span>
+							<span>
+								<span class="block text-label-s text-neutral-on-background-weak">Correo</span>
+								<!-- TODO: reemplazar con el correo real del blog -->
+								<a
+									href={`mailto:${contactEmail}`}
+									class="text-label-m text-neutral-on-background-strong transition-colors duration-100 hover:text-accent-on-background-weak"
+								>
+									{contactEmail}
+								</a>
+							</span>
+						</li>
+						{
+							SOCIAL_LINKS.map((social) => (
+								<li class="flex items-center gap-3">
+									<span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent-alpha-weak text-accent-on-background-weak">
+										<Icon name={social.icon} size={16} strokeWidth={1.75} />
+									</span>
+									<span>
+										<span class="block text-label-s text-neutral-on-background-weak">
+											{social.label}
+										</span>
+										<a
+											href={social.href}
+											target="_blank"
+											rel="noopener"
+											class="inline-flex items-center gap-1 text-label-m text-neutral-on-background-strong transition-colors duration-100 hover:text-accent-on-background-weak"
+										>
+											@conectandorutas
+											<Icon name="arrow-up-right" size={12} />
+										</a>
+									</span>
+								</li>
+							))
+						}
+					</ul>
+				</div>
+			</aside>
+		</div>
+	</section>
+</BaseLayout>

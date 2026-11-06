@@ -1,0 +1,57 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import FormattedDate from './FormattedDate.astro';
+import { CATEGORIES } from '../consts';
+
+interface Props {
+	post: CollectionEntry<'blog'>;
+	headingLevel?: 'h2' | 'h3';
+}
+
+const { post, headingLevel = 'h3' } = Astro.props;
+const Heading = headingLevel;
+const category = CATEGORIES.find((c) => c.slug === post.data.category);
+---
+
+<article
+	class="group overflow-hidden rounded-l border border-neutral-alpha-weak bg-neutral-background-weak transition-colors duration-100 hover:border-neutral-border-medium"
+>
+	<a href={`/blog/${post.id}/`} class="block">
+		{
+			post.data.heroImage && (
+				<Image
+					width={720}
+					height={360}
+					src={post.data.heroImage}
+					alt=""
+					class="aspect-2/1 w-full object-cover"
+					loading="lazy"
+				/>
+			)
+		}
+		<div class="p-5">
+			<div
+				class="flex flex-wrap items-center gap-2 text-label-s text-neutral-on-background-weak"
+			>
+				{
+					category && (
+						<span class="rounded-full bg-accent-alpha-weak px-3 py-1 text-label-xs text-accent-on-background-weak">
+							{category.label}
+						</span>
+					)
+				}
+				<span><FormattedDate date={post.data.pubDate} /></span>
+				{post.data.country && <span>{post.data.country}</span>}
+			</div>
+			<Heading
+				class="mt-2 font-heading text-heading-s text-neutral-on-background-strong transition-colors duration-100 group-hover:text-accent-on-background-weak"
+			>
+				{post.data.title}
+			</Heading>
+			<p class="mt-2 line-clamp-2 text-body-s text-neutral-on-background-medium">
+				{post.data.description}
+			</p>
+		</div>
+	</a>
+</article>

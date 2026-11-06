@@ -1,0 +1,66 @@
+---
+import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import type { InferGetStaticPropsType } from 'astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import { SITE_TITLE } from '../../consts';
+import { slugify } from '../../utils/slug';
+
+export async function getStaticPaths() {
+	const posts = (await getCollection('blog')).sort(
+		(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+	);
+
+	const byCountry = new Map<
+		string,
+		{ country: string; region?: string; posts: CollectionEntry<'blog'>[] }
+	>();
+	for (const post of posts) {
+		if (!post.data.country) continue;
+		const slug = slugify(post.data.country);
+		if (!byCountry.has(slug)) {
+			byCountry.set(slug, {
+				country: post.data.country,
+				region: post.data.region,
+				posts: [],
+			});
+		}
+		byCountry.get(slug)!.posts.push(post);
+	}
+
+	return [...byCountry.entries()].map(([slug, { country, region, posts }]) => ({
+		params: { country: slug },
+		props: { country, region, posts },
+	}));
+}
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+
+const { country, region, posts } = Astro.props;
+---
+
+<BaseLayout
+	title={`${country} - ${SITE_TITLE}`}
+	description={`Todos los artículos de Conectando Rutas sobre ${country}: itinerarios día por día, presupuestos reales y consejos probados en nuestro viaje.`}
+>
+	<section class="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+		<div>
+			<p class="text-label-s text-accent-on-background-weak">{region}</p>
+			<h1
+				class="mt-1 font-heading text-display-s font-light text-neutral-on-background-strong"
+			>
+				{country}
+			</h1>
+			<p class="mt-4 max-w-xl text-body-m text-neutral-on-background-medium">
+				{posts.length}
+				{posts.length === 1 ? 'artículo' : 'artículos'} sobre {country}: rutas reales, gastos
+				detallados y aprendizajes de nuestro viaje.
+			</p>
+		</div>
+
+		<div class="mt-12 grid gap-6 sm:grid-cols-2">
+			{posts.map((post) => <PostCard post={post} headingLevel="h2" />)}
+		</div>
+	</section>
+</BaseLayout>

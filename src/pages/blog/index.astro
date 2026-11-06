@@ -1,8 +1,7 @@
 ---
-import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import FormattedDate from '../../components/FormattedDate.astro';
+import PostCard from '../../components/PostCard.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
 
 const posts = (await getCollection('blog')).sort(
@@ -14,7 +13,9 @@ const posts = (await getCollection('blog')).sort(
 	<section class="mx-auto max-w-6xl px-4 py-16 sm:px-6">
 		<div class="text-center">
 			<p class="text-label-s text-accent-on-background-weak">Blog</p>
-			<h1 class="mt-1 font-heading text-display-s font-light text-neutral-on-background-strong">
+			<h1
+				class="mt-1 font-heading text-display-s font-light text-neutral-on-background-strong"
+			>
 				Todas las rutas y artículos
 			</h1>
 			<p class="mx-auto mt-4 max-w-xl text-body-m text-neutral-on-background-medium">
@@ -23,35 +24,7 @@ const posts = (await getCollection('blog')).sort(
 		</div>
 
 		<div class="mt-12 grid gap-6 sm:grid-cols-2">
-			{
-				posts.map((post) => (
-					<article class="group overflow-hidden rounded-l border border-neutral-alpha-weak bg-neutral-background-weak transition-colors duration-100 hover:border-neutral-border-medium">
-						<a href={`/blog/${post.id}/`} class="block">
-							{post.data.heroImage && (
-								<Image
-									width={720}
-									height={360}
-									src={post.data.heroImage}
-									alt=""
-									class="aspect-2/1 w-full object-cover"
-									loading="lazy"
-								/>
-							)}
-							<div class="p-5">
-								<p class="text-label-s text-neutral-on-background-weak">
-									<FormattedDate date={post.data.pubDate} />
-								</p>
-								<h2 class="mt-2 font-heading text-heading-s text-neutral-on-background-strong transition-colors duration-100 group-hover:text-accent-on-background-weak">
-									{post.data.title}
-								</h2>
-								<p class="mt-2 line-clamp-2 text-body-s text-neutral-on-background-medium">
-									{post.data.description}
-								</p>
-							</div>
-						</a>
-					</article>
-				))
-			}
+			{posts.map((post) => <PostCard post={post} headingLevel="h2" />)}
 		</div>
 	</section>
 </BaseLayout>

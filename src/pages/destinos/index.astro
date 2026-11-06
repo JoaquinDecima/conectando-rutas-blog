@@ -1,0 +1,77 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Icon from '../../components/Icon.astro';
+import { SITE_TITLE } from '../../consts';
+import { slugify } from '../../utils/slug';
+
+const posts = await getCollection('blog');
+
+const regions = new Map<string, Map<string, number>>();
+for (const post of posts) {
+	const { country, region } = post.data;
+	if (!country || !region) continue;
+	if (!regions.has(region)) regions.set(region, new Map());
+	const countries = regions.get(region)!;
+	countries.set(country, (countries.get(country) ?? 0) + 1);
+}
+
+const sortedRegions = [...regions.entries()].sort((a, b) => a[0].localeCompare(b[0]));
+---
+
+<BaseLayout
+	title={`Destinos - ${SITE_TITLE}`}
+	description="Explora todos los destinos del blog: países y regiones con itinerarios, presupuestos y consejos de viaje documentados por Conectando Rutas."
+>
+	<section class="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+		<div>
+			<p class="text-label-s text-accent-on-background-weak">Destinos</p>
+			<h1
+				class="mt-1 font-heading text-display-s font-light text-neutral-on-background-strong"
+			>
+				Todos los destinos recorridos
+			</h1>
+			<p class="mt-4 max-w-xl text-body-m text-neutral-on-background-medium">
+				Cada país que hemos cruzado, con sus rutas, presupuestos y consejos reunidos en un
+				solo lugar.
+			</p>
+		</div>
+
+		{
+			sortedRegions.map(([region, countries]) => (
+				<section class="mt-12">
+					<div class="border-b border-neutral-alpha-weak pb-3">
+						<h2 class="font-heading text-heading-m text-neutral-on-background-strong">
+							{region}
+						</h2>
+					</div>
+					<div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+						{[...countries.entries()]
+							.sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+							.map(([country, count]) => (
+								<a
+									href={`/destinos/${slugify(country)}/`}
+									class="group flex items-center justify-between rounded-l border border-neutral-alpha-weak bg-neutral-background-weak p-5 transition-colors duration-100 hover:border-neutral-border-medium"
+								>
+									<span class="flex items-center gap-3">
+										<Icon
+											name="map-pin"
+											size={18}
+											strokeWidth={1.75}
+											class="text-accent-on-background-weak"
+										/>
+										<h3 class="font-heading text-heading-s text-neutral-on-background-strong">
+											{country}
+										</h3>
+									</span>
+									<span class="rounded-full bg-accent-alpha-weak px-3 py-1 text-label-xs text-accent-on-background-weak">
+										{count} {count === 1 ? 'ruta' : 'rutas'}
+									</span>
+								</a>
+							))}
+					</div>
+				</section>
+			))
+		}
+	</section>
+</BaseLayout>

@@ -1,64 +1,103 @@
 ---
+import { Image } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Icon from '../components/Icon.astro';
-import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import { CATEGORIES, SITE_TITLE } from '../consts';
+import aboutImage from '../assets/blog-placeholder-about.jpg';
 ---
 
-<BaseLayout title={`Nosotros - ${SITE_TITLE}`} description={SITE_DESCRIPTION}>
+<BaseLayout
+	title={`Nosotros - ${SITE_TITLE}`}
+	description="Somos la familia viajera detrás de Conectando Rutas: itinerarios reales, presupuestos honestos y consejos para planificar tu próximo viaje."
+>
 	<section class="mx-auto max-w-3xl px-4 py-16 sm:px-6">
 		<div class="text-center">
 			<p class="text-label-s text-accent-on-background-weak">Nosotros</p>
-			<h1 class="mt-1 font-heading text-display-s font-light text-neutral-on-background-strong">
+			<h1
+				class="mt-1 font-heading text-display-s font-light text-neutral-on-background-strong"
+			>
 				Viajar es conectar
 			</h1>
 			<p class="mx-auto mt-4 max-w-xl text-body-m text-neutral-on-background-medium">
-				{SITE_DESCRIPTION}
+				Una familia viajera documentando sus grandes rutas por Latinoamérica, kilómetro a
+				kilómetro.
 			</p>
 		</div>
 
-		<div class="mt-12 space-y-6 text-body-m text-neutral-on-background-medium">
-			<p>
-				Conectando Rutas nació de una idea simple: los mejores viajes no son los que más
-				lugares acumulan, sino los que mejor conectan experiencias, personas y paisajes.
-				Desde 2022 documentamos las rutas que recorremos para que tú puedas planificar las
-				tuyas con información real y actualizada.
-			</p>
-			<p>
-				Cada artículo que publicamos parte de un viaje hecho en primera persona: medimos
-				distancias, probamos transportes, dormimos en los alojamientos que recomendamos y
-				anotamos cada detalle que nos habría gustado saber antes de salir.
-			</p>
-			<p>
-				Nuestro compromiso es contigo: sin contenidos patrocinados disfrazados de guías, sin
-				inflar expectativas. Solo rutas honestas, presupuestos reales y el deseo de que el
-				mundo te siga sorprendiendo kilómetro a kilómetro.
-			</p>
-		</div>
-
-		<div class="mt-12 grid gap-4 sm:grid-cols-3">
-			{
-				[
-				{ value: '120+', label: 'Rutas documentadas' },
-				{ value: '18', label: 'Países recorridos' },
-				{ value: '2022', label: 'Viajando y escribiendo desde' },
-				].map((stat) => (
-					<div class="rounded-l border border-neutral-alpha-weak bg-neutral-background-weak p-6 text-center">
-						<p class="font-heading text-heading-xl font-light text-accent-on-background-weak">
-							{stat.value}
-						</p>
-						<p class="mt-1 text-label-s text-neutral-on-background-weak">{stat.label}</p>
+		<!-- TODO: reemplazar con la historia real -->
+		<div class="mt-12 grid items-start gap-8 md:grid-cols-2">
+			<div>
+				<Image
+					src={aboutImage}
+					width={960}
+					height={480}
+					alt="Paisaje de una de las rutas documentadas en el blog"
+					class="aspect-4/5 w-full rounded-l border border-neutral-alpha-weak object-cover"
+					loading="lazy"
+				/>
+			</div>
+			<div class="space-y-6 text-body-m text-neutral-on-background-medium">
+				<div>
+					<h2 class="font-heading text-heading-m text-neutral-on-background-strong">
+						Quiénes somos
+					</h2>
+					<p class="mt-3">
+						Hola, somos [Nombre] y [Nombre]; con nuestros dos hijos, [Nombre] y [Nombre],
+						y la abuela, que se sumó a la aventura, recorremos Latinoamérica kilómetro a
+						kilómetro. Durante años apilamos destinos en una lista que siempre era «para
+						más adelante», hasta que decidimos empezar de verdad: una mochila por
+						persona, un coche alquilado y las primeras rutas largas que hoy contamos aquí.
+					</p>
+				</div>
+				<div>
+					<h2 class="font-heading text-heading-m text-neutral-on-background-strong">
+						Por qué Conectando Rutas
+					</h2>
+					<p class="mt-3">
+						Al planificar nuestros viajes nos topábamos con lo mismo: guías bonitas pero
+						incompletas, presupuestos irreales y consejos de quien nunca pisó el lugar,
+						y mucho menos con niños y una abuela a bordo. Este blog es nuestra respuesta:
+						contamos cada ruta en primera persona, con aciertos, errores y cifras reales.
+					</p>
+				</div>
+				<div>
+					<h2 class="font-heading text-heading-m text-neutral-on-background-strong">
+						Qué vas a encontrar aquí
+					</h2>
+					<p class="mt-3">
+						Itinerarios día por día, presupuestos desglosados y consejos prácticos que
+						aprendimos sobre la marcha. El blog recién arranca, así que hay pocas rutas
+						publicadas, pero cada una está probada por nosotros de principio a fin.
+					</p>
+					<div class="mt-6 flex flex-wrap gap-3">
+						{
+							CATEGORIES.map((category) => (
+								<a
+									href={`/temas/${category.slug}/`}
+									class="inline-flex items-center gap-2 rounded-full border border-neutral-alpha-weak bg-neutral-background-weak px-4 py-2 text-label-m text-neutral-on-background-strong transition-colors duration-100 hover:border-accent-border-medium hover:text-accent-on-background-weak"
+								>
+									{category.label}
+								</a>
+							))
+						}
 					</div>
-				))
-			}
+				</div>
+			</div>
 		</div>
 
-		<div class="mt-12 text-center">
+		<div class="mt-12 flex flex-wrap items-center justify-center gap-3">
 			<a
-				href="/blog"
+				href="/contacto"
 				class="inline-flex items-center gap-2 rounded-full bg-accent-solid-strong px-5 py-2.5 text-label-m font-medium text-accent-on-solid-strong transition-colors duration-100 hover:bg-accent-solid-medium"
 			>
-				Leer el blog
+				Escríbenos
 				<Icon name="arrow-right" size={16} />
+			</a>
+			<a
+				href="/blog"
+				class="inline-flex items-center gap-2 rounded-full border border-neutral-alpha-strong px-5 py-2.5 text-label-m font-medium text-neutral-on-background-strong transition-colors duration-100 hover:bg-neutral-alpha-weak"
+			>
+				Leer el blog
 			</a>
 		</div>
 	</section>

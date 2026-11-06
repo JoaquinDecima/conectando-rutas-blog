@@ -14,6 +14,10 @@ const blog = defineCollection({
 			pubDate: z.coerce.date(),
 			updatedDate: z.coerce.date().optional(),
 			heroImage: z.optional(image()),
+			category: z.enum(['itinerarios', 'consejos', 'presupuestos', 'requisitos']),
+			country: z.string().optional(),
+			region: z.string().optional(),
+			tags: z.array(z.string()).optional(),
 		}),
 });
 
