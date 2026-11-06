@@ -52,12 +52,12 @@ const routesHtml = map.trips
 const pinsHtml = map.points
 	.map(
 		(p) =>
-			`<a href="${esc(p.href)}" class="map-pin" aria-label="${esc(p.name + ' — leer artículo')}"><title>${esc(p.name + ' — ' + p.description)}</title><circle class="map-pin-base" cx="${p.x}" cy="${p.y}" r="10" fill="var(--accent-solid-strong)" stroke="var(--page-background)" stroke-width="2" vector-effect="non-scaling-stroke" /><circle class="map-pin-dot" cx="${p.x}" cy="${p.y}" r="3.5" fill="var(--page-background)" /></a>`
+			`<a href="${esc(p.href)}" xlink:href="${esc(p.href)}" class="map-pin" aria-label="${esc(p.name + ' — leer artículo')}"><title>${esc(p.name + ' — ' + p.description)}</title><circle class="map-pin-base" cx="${p.x}" cy="${p.y}" r="10" fill="var(--accent-solid-strong)" stroke="var(--page-background)" stroke-width="2" vector-effect="non-scaling-stroke" /><circle class="map-pin-dot" cx="${p.x}" cy="${p.y}" r="3.5" fill="var(--page-background)" /></a>`
 	)
 	.join('');
 
 const svgHtml = `
-<svg viewBox="0 0 ${width} ${height}" class="mx-auto h-auto w-auto max-h-[70vh] max-w-full" role="img" aria-label="Mapa de nuestro recorrido por ${esc(countryNames)}: líneas de ruta y puntos que enlazan a las historias del blog">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 ${width} ${height}" class="mx-auto h-auto w-auto max-h-[70vh] max-w-full" role="img" aria-label="Mapa de nuestro recorrido por ${esc(countryNames)}: líneas de ruta y puntos que enlazan a las historias del blog">
 	<g class="map-land" aria-hidden="true">${countryPathsHtml}</g>
 	<g class="map-routes" aria-hidden="true">${routesHtml}</g>
 	<g id="map-pins">${pinsHtml}</g>
