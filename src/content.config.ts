@@ -18,6 +18,10 @@ const blog = defineCollection({
 			country: z.string().optional(),
 			region: z.string().optional(),
 			tags: z.array(z.string()).optional(),
+			// Viaje al que pertenece este artículo (agrupa puntos en una línea de ruta distinta en el mapa)
+			trip: z.string().optional(),
+			// Coordenadas [latitud, longitud] del artículo para pin y línea de ruta
+			coordinates: z.array(z.number()).length(2).optional(),
 		}),
 });
 

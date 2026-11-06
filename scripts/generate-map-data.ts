@@ -2,13 +2,12 @@
  * Build-time generator for the static SVG map on /rutas.
  *
  * Reglas del mapa (definidas por el usuario):
- * - Los países que aparecen en el mapa se derivan de las historias: el campo
- *   `country` del frontmatter de los artículos en src/content/blog/. Cada país
- *   nuevo que tengan una historia, aparece solo en el mapa.
- * - MANUAL_MAP_COUNTRIES en src/data/route.ts permite forzar países a mano
- *   (países de paso sin historia aún).
- * - Las rutas y los pins de src/data/route.ts llevan su campo `country`; se
- *   renderizan solo si ese país está activo.
+ * - Cada artículo tiene UNA ubicación: `country` + `coordinates: [lat, lng]` opcionales.
+ * - Los países que aparecen en el mapa se derivan del campo `country` de los artículos:
+ *   un país aparece solo cuando existe al menos una historia con ese país.
+ * - Cada artículo con `trip` + `coordinates` genera un pin. Los pines de un mismo
+ *   `trip` ordenados por `pubDate` forman UNA línea de ruta distinta (un viaje).
+ * - MANUAL_MAP_COUNTRIES en src/data/route.ts permite forzar países a mano.
  *
  * Datos subyacentes: siluetas de países de Natural Earth 110m (world-atlas) y
  * geometría de rutas de OSRM (cached en .cache/route-osrm.json, gitignored).
@@ -17,11 +16,14 @@
  *
  * Uso: bun scripts/generate-map-data.ts
  */
-import { readFile, writeFile, readdir, rm } from 'node:fs/promises';
+import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { feature } from 'topojson-client';
 import { geoAzimuthalEqualArea, geoPath } from 'd3-geo';
-import { ROUTES, POINTS, MANUAL_MAP_COUNTRIES } from '../src/data/route';
+
+import { readdirSync, readFileSync } from 'node:fs';
+
+import { MANUAL_MAP_COUNTRIES } from '../src/data/route';
 
 const POSTS_DIR = new URL('../src/content/blog/', import.meta.url);
 const OSRM_BASE = 'https://router.project-osrm.org/route/v1/driving';
@@ -29,11 +31,21 @@ const MAX_ATTEMPTS = 3;
 const RETRY_DELAY_MS = 2000;
 const REQUEST_TIMEOUT_MS = 30_000;
 const GEOMETRY_DECIMALS = 5;
-const VIEW_PADDING = 40; // px alrededor del contenido en el viewBox
+const VIEW_PADDING = 40;
 const VIEW_WIDTH = 1000;
 const VIEW_HEIGHT = 1240;
 const DP_TOLERANCE_DEG = 0.005;
 const MAX_ROUTE_POINTS = 600;
+
+// Tokens Once UI que se rotan como color de cada viaje (línea de ruta distinta)
+const TRIP_COLORS = [
+	'accent-solid-strong',
+	'accent-solid-medium',
+	'neutral-solid-strong',
+	'accent-solid-weak',
+	'neutral-solid-medium',
+	'neutral-solid-weak',
+] as const;
 
 interface Position {
 	0: number;
@@ -47,37 +59,67 @@ interface OsrmResponse {
 	routes?: Array<{ geometry?: { coordinates?: [number, number][] } }>;
 }
 
+interface RawFrontmatter {
+	title?: string;
+	description?: string;
+	pubDate?: string;
+	country?: string;
+	trip?: string;
+	coordinates?: [number, number];
+}
+
 const require = createRequire(import.meta.url);
 const cacheUrl = new URL('../.cache/route-osrm.json', import.meta.url);
 const outputUrl = new URL('../src/data/map-data.json', import.meta.url);
-const legacyGeometryUrl = new URL('../src/data/route-geometry.json', import.meta.url);
 
 function round(value: number, decimals: number): number {
 	const factor = 10 ** decimals;
 	return Math.round(value * factor) / factor;
 }
 
-// --- Lectura del país de cada historia --------------------------------------
+// --- Lectura de artículos ---------------------------------------------------
 
-function postCountries(dir: URL): string[] {
-	const countries = new Set<string>();
-	for (const file of readdirSync(dir)) {
-		if (!file.endsWith('.md') && !file.endsWith('.mdx')) continue;
-		const text = readFileSync(new URL(file, dir), 'utf8');
-		const fm = text.match(/^---\n([\s\S]*?)\n---/);
-		if (!fm) continue;
-		for (const line of fm[1].split('\n')) {
-			const m = line.match(/^country:\s*(.*)/i);
-			if (!m) continue;
-			let val = m[1].trim().replace(/^['"]|['"]$/g, '');
-			if (val) countries.add(val);
+function parseFrontmatter(text: string): RawFrontmatter {
+	const fm = text.match(/^---\n([\s\S]*?)\n---/);
+	if (!fm) return {};
+	const data: RawFrontmatter = {};
+	for (const line of fm[1].split('\n')) {
+		const m = line.match(/^([a-zA-Z]+):\s*(.*)/);
+		if (!m) continue;
+		let [, key, val] = m;
+		val = val.trim().replace(/^['"]|['"]$/g, '');
+		if (key === 'coordinates') {
+			// coordinates: [-41.13, -71.31]
+			const nums = val.match(/[-0-9.]+/g);
+			if (nums?.length === 2) {
+				data.coordinates = [Number(nums[0]), Number(nums[1])];
+			}
+		} else if (key === 'country') {
+			// Normalizar nombres de país: quitar acentos para coincidir con Natural Earth
+			// (ej. 'Perú' → 'Peru', 'México' → 'Mexico')
+			data.country = val.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+		} else {
+			data[key as keyof RawFrontmatter] = val;
 		}
 	}
-	return [...countries].sort();
+	return data;
 }
 
-// readdir/readFile sincrónicos para no complicar el script top-level
-import { readdirSync, readFileSync } from 'node:fs';
+function readPosts(): Array<RawFrontmatter & { file: string }> {
+	const posts: Array<RawFrontmatter & { file: string }> = [];
+	for (const file of readdirSync(POSTS_DIR)) {
+		if (!file.endsWith('.md') && !file.endsWith('.mdx')) continue;
+		const text = readFileSync(new URL(file, POSTS_DIR), 'utf8');
+		const fm = parseFrontmatter(text);
+		if (fm.country || fm.trip || fm.coordinates) {
+			posts.push({ ...fm, file });
+		}
+	}
+	return posts.sort(
+		(a, b) =>
+			new Date(a.pubDate ?? 0).getTime() - new Date(b.pubDate ?? 0).getTime(),
+	);
+}
 
 // --- Geometría de rutas (OSRM con caché) ------------------------------------
 
@@ -148,14 +190,14 @@ function douglasPeucker(points: LatLon[], tolerance: number): LatLon[] {
 	return points.filter((_, i) => keep[i] === 1);
 }
 
-function simplifyRoute(points: LatLon[]): { simplified: LatLon[]; tolerance: number } {
+function simplifyRoute(points: LatLon[]): LatLon[] {
 	let tolerance = DP_TOLERANCE_DEG;
 	let simplified = douglasPeucker(points, tolerance);
 	while (simplified.length > MAX_ROUTE_POINTS && tolerance < 1) {
 		tolerance *= 1.6;
 		simplified = douglasPeucker(points, tolerance);
 	}
-	return { simplified, tolerance };
+	return simplified;
 }
 
 // --- Helpers de proyección y path -------------------------------------------
@@ -231,8 +273,6 @@ async function loadLatamCountries(): Promise<Array<{ name: string; geometry: unk
 	for (const item of collection.features) {
 		const name = item.properties?.name ?? '';
 		if (name === 'France') {
-			// La Guayana Francesa viaja dentro del multipolygon de Francia en 110m:
-			// mantenemos solo los polígonos que intersectan el bbox de LATAM.
 			const polygons =
 				item.geometry.type === 'MultiPolygon'
 					? (item.geometry.coordinates as Position[][][])
@@ -249,20 +289,65 @@ async function loadLatamCountries(): Promise<Array<{ name: string; geometry: unk
 	return selected.sort((a, b) => a.name.localeCompare(b.name));
 }
 
+// --- Slug -------------------------------------------------------------------
+
+function slugify(text: string): string {
+	return String(text ?? '')
+		.normalize('NFD')
+		.replace(/[\u0300-\u036f]/g, '')
+		.toLowerCase()
+		.trim()
+		.replace(/[^a-z0-9]+/g, '-')
+		.replace(/^-+|-+$/g, '');
+}
+
 // --- Main -------------------------------------------------------------------
 
+interface MapPoint {
+	id: string;
+	name: string;
+	description: string;
+	country: string;
+	href: string;
+	trip: string;
+	x: number;
+	y: number;
+}
+
+interface MapTrip {
+	id: string;
+	name: string;
+	colorToken: string;
+	d: string;
+	points: MapPoint[];
+}
+
 async function main(): Promise<number> {
-	console.log('[map:generate] Leyendo países de las historias…');
-	const fromPosts = postCountries(POSTS_DIR);
-	const active = new Set([...fromPosts, ...MANUAL_MAP_COUNTRIES]);
-	console.log(`[map:generate] Países activos: ${[...active].join(', ') || '(ninguno)'}`);
+	console.log('[map:generate] Leyendo artículos de src/content/blog/…');
+	const posts = readPosts();
+
+	const countriesSet = new Set<string>();
+	const tripGroups = new Map<string, Array<RawFrontmatter & { file: string } & { coordinates: LatLon }>>();
+
+	for (const post of posts) {
+		if (post.country) countriesSet.add(post.country);
+		if (post.trip && post.coordinates) {
+			const group = tripGroups.get(post.trip) ?? [];
+			group.push({ ...post, coordinates: post.coordinates });
+			tripGroups.set(post.trip, group);
+		}
+	}
+
+	const activeCountries = new Set([...countriesSet, ...MANUAL_MAP_COUNTRIES]);
+	console.log(`[map:generate] Países activos: ${[...activeCountries].join(', ') || '(ninguno)'}`);
+	console.log(`[map:generate] Viajes detectados: ${[...tripGroups.keys()].join(', ') || '(ninguno)'}`);
 
 	console.log('[map:generate] Cargando siluetas Natural Earth 110m…');
 	const allCountries = await loadLatamCountries();
-	const countries = allCountries.filter((c) => active.has(c.name));
-	const missing = [...active].filter((name) => !countries.some((c) => c.name === name));
+	const countries = allCountries.filter((c) => activeCountries.has(c.name));
+	const missing = [...activeCountries].filter((name) => !countries.some((c) => c.name === name));
 	if (missing.length) {
-		console.warn(`[map:generate] AVISO: países no encontrados en los datos (revisar escritura): ${missing.join(', ')}`);
+		console.warn(`[map:generate] AVISO: países no encontrados en los datos: ${missing.join(', ')}`);
 	}
 
 	const projection = geoAzimuthalEqualArea().rotate([65, 20]);
@@ -278,17 +363,21 @@ async function main(): Promise<number> {
 	const freshCache: Record<string, LatLon[]> = {};
 	let fetched = 0;
 	let failed = 0;
-	const routes: Array<{ id: string; country: string; name: string; d: string }> = [];
+	const trips: MapTrip[] = [];
+	let tripIndex = 0;
 
-	for (const segment of ROUTES) {
-		if (segment.country && !active.has(segment.country)) continue;
+	for (const [tripName, group] of tripGroups) {
+		const ordered = [...group].sort(
+			(a, b) => new Date(a.pubDate ?? 0).getTime() - new Date(b.pubDate ?? 0).getTime(),
+		);
+		const coordinates = ordered.map((p) => p.coordinates as LatLon);
 
-		let geometry = cache[segment.id] ?? null;
+		let geometry = cache[tripName] ?? null;
 		if (!geometry) {
-			process.stdout.write(`[map:generate] ${segment.id}: obteniendo de OSRM… `);
-			geometry = await fetchSegment(segment.id, segment.coordinates);
+			process.stdout.write(`[map:generate] "${tripName}": obteniendo de OSRM… `);
+			geometry = await fetchSegment(tripName, coordinates);
 			if (geometry) {
-				freshCache[segment.id] = geometry;
+				freshCache[tripName] = geometry;
 				fetched++;
 				process.stdout.write(`ok, ${geometry.length} puntos\n`);
 			} else {
@@ -296,60 +385,72 @@ async function main(): Promise<number> {
 				process.stdout.write('falló, usando waypoints directos\n');
 			}
 		} else {
-			process.stdout.write(`[map:generate] ${segment.id}: usando caché (${geometry.length} puntos)\n`);
+			process.stdout.write(`[map:generate] "${tripName}": usando caché (${geometry.length} puntos)\n`);
 		}
 
-		const source = geometry ?? segment.coordinates;
-		const { simplified } = simplifyRoute(source);
+		const source = geometry ?? coordinates;
+		const simplified = simplifyRoute(source);
 		const line = { type: 'LineString', coordinates: simplified.map(([lat, lng]) => [lng, lat]) };
-		routes.push({ id: segment.id, country: segment.country ?? '', name: segment.name, d: pathFor(line, projection) });
+		const d = pathFor(line, projection);
+
+		const colorToken = TRIP_COLORS[tripIndex % TRIP_COLORS.length];
+		tripIndex++;
+
+		trips.push({
+			id: slugify(tripName),
+			name: tripName,
+			colorToken,
+			d,
+			points: ordered.map((p) => {
+				const [x, y] = projection([p.coordinates[1], p.coordinates[0]]) as [number, number];
+				return {
+					id: `${slugify(tripName)}-${slugify(p.name)}`,
+					name: p.name ?? p.file,
+					description: p.description ?? '',
+					country: p.country ?? '',
+					href: `/blog/${slugify(p.file.replace(/\.(md|mdx)$/, ''))}/`,
+					trip: p.trip ?? '',
+					x: round(x, 1),
+					y: round(y, 1),
+				};
+			}),
+		});
+
 		if (geometry) {
-			process.stdout.write(`[map:generate] ${segment.id}: simplificado ${source.length} → ${simplified.length} puntos\n`);
+			process.stdout.write(`[map:generate] "${tripName}": simplificado ${source.length} → ${simplified.length} puntos\n`);
 		}
 	}
 
 	if (fetched > 0 || (!cacheExisted && Object.keys(cache).length === 0)) {
-		await new URL('.', cacheUrl).toString(); // no-op placeholder
-		const dir = new URL('.', cacheUrl);
 		try {
+			await mkdir(new URL('.', cacheUrl), { recursive: true });
 			await writeFile(cacheUrl, `${JSON.stringify({ ...cache, ...freshCache }, null, '\t')}\n`, 'utf8');
 			console.log(`[map:generate] Caché OSRM actualizado en ${cacheUrl.pathname}`);
 		} catch {
-			// .cache puede no ser escribible en algunos entornos; no es crítico
+			// no crítico
 		}
 	}
 
-	// Elimina el legado committed si existe (ya no se usa en runtime)
 	try {
-		await rm(legacyGeometryUrl);
-		console.log(`[map:generate] Eliminado legado src/data/route-geometry.json`);
+		await writeFile(new URL('../src/data/route-geometry.json', import.meta.url), '', 'utf8');
 	} catch {
-		// no existía, ok
+		// no crítico
 	}
 
-	const points = POINTS.filter((p) => !p.country || active.has(p.country)).map((point) => {
-		const [x, y] = projection([point.coordinates[1], point.coordinates[0]]) as [number, number];
-		return {
-			id: point.id,
-			name: point.name,
-			description: point.description,
-			x: round(x, 1),
-			y: round(y, 1),
-			...(point.country ? { country: point.country } : {}),
-			...(point.href ? { href: point.href } : {}),
-		};
-	});
+	const allPoints = trips.flatMap((t) => t.points);
 
 	const mapData = {
 		viewBox: [VIEW_WIDTH, VIEW_HEIGHT],
 		countries: countryPaths,
-		routes,
-		points,
+		trips,
+		points: allPoints,
 	};
 
 	await writeFile(outputUrl, `${JSON.stringify(mapData)}\n`, 'utf8');
 	const sizeKb = (JSON.stringify(mapData).length / 1024).toFixed(1);
-	console.log(`[map:generate] Escrito ${outputUrl.pathname}: ${countryPaths.length} países, ${routes.length} rutas, ${points.length} puntos (${sizeKb} KB)`);
+	console.log(
+		`[map:generate] Escrito ${outputUrl.pathname}: ${countryPaths.length} países, ${trips.length} viajes, ${allPoints.length} puntos (${sizeKb} KB)`,
+	);
 	return 0;
 }
 

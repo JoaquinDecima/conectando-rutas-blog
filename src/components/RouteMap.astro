@@ -5,186 +5,64 @@ interface MapPoint {
 	id: string;
 	name: string;
 	description: string;
+	country: string;
+	href: string;
+	trip: string;
 	x: number;
 	y: number;
-	href?: string;
+}
+
+interface MapTrip {
+	id: string;
+	name: string;
+	colorToken: string;
+	d: string;
+	points: MapPoint[];
 }
 
 interface MapData {
 	viewBox: [number, number];
 	countries: Array<{ name: string; d: string }>;
-	routes: Array<{ id: string; name: string; d: string }>;
+	trips: MapTrip[];
 	points: MapPoint[];
 }
 
 const map = mapData as unknown as MapData;
 const [width, height] = map.viewBox;
+const countryNames = map.countries.map((c) => c.name).join(' y ');
+
+function esc(s: string): string {
+	return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+const countryPathsHtml = map.countries
+	.map(
+		(c) =>
+			`<path d="${esc(c.d)}" fill="var(--neutral-background-medium)" stroke="var(--neutral-alpha-strong)" stroke-width="1" vector-effect="non-scaling-stroke" />`
+	)
+	.join('');
+
+const routesHtml = map.trips
+	.map(
+		(trip) =>
+			`<g class="map-route"><path d="${esc(trip.d)}" fill="none" stroke-linejoin="round" stroke-linecap="round" stroke="var(--neutral-background-weak)" stroke-width="6" opacity="0.9" /><path d="${esc(trip.d)}" fill="none" stroke-linejoin="round" stroke-linecap="round" stroke="var(--${trip.colorToken})" stroke-width="3" /></g>`
+	)
+	.join('');
+
+const pinsHtml = map.points
+	.map(
+		(p) =>
+			`<a href="${esc(p.href)}" class="map-pin" aria-label="${esc(p.name + ' — leer artículo')}"><title>${esc(p.name + ' — ' + p.description)}</title><circle class="map-pin-base" cx="${p.x}" cy="${p.y}" r="10" fill="var(--accent-solid-strong)" stroke="var(--page-background)" stroke-width="2" vector-effect="non-scaling-stroke" /><circle class="map-pin-dot" cx="${p.x}" cy="${p.y}" r="3.5" fill="var(--page-background)" /></a>`
+	)
+	.join('');
+
+const svgHtml = `
+<svg viewBox="0 0 ${width} ${height}" class="mx-auto h-auto w-auto max-h-[70vh] max-w-full" role="img" aria-label="Mapa de nuestro recorrido por ${esc(countryNames)}: líneas de ruta y puntos que enlazan a las historias del blog">
+	<g class="map-land" aria-hidden="true">${countryPathsHtml}</g>
+	<g class="map-routes" aria-hidden="true">${routesHtml}</g>
+	<g id="map-pins">${pinsHtml}</g>
+</svg>
+`;
+
 ---
-
-<figure
-	class="relative rounded-l border border-neutral-alpha-weak bg-neutral-background-weak p-4 sm:p-6"
->
-		<svg
-			viewBox={`0 0 ${width} ${height}`}
-			class="mx-auto h-auto w-auto max-h-[70vh] max-w-full"
-			role="img"
-			aria-label={`Mapa de nuestro recorrido por ${map.countries.map((c) => c.name).join(' y ')}: líneas de ruta y puntos que enlazan a las historias del blog`}
-		>
-		<g class="map-land" aria-hidden="true">
-			{map.countries.map((country) => <path d={country.d} />)}
-		</g>
-		<g class="map-routes" aria-hidden="true">
-			{
-				map.routes.map((route) => (
-					<g class="map-route">
-						<path d={route.d} class="map-route-casing" />
-						<path d={route.d} class="map-route-line" />
-						<path d={route.d} class="map-route-core" />
-					</g>
-				))
-			}
-		</g>
-		<g id="map-pins">
-			{
-				map.points.map((point) =>
-					point.href ? (
-						<a href={point.href} class="map-pin" aria-label={`${point.name} — leer artículo`}>
-							<title>{`${point.name} — ${point.description}`}</title>
-							<circle class="map-pin-base" cx={point.x} cy={point.y} r="10" />
-							<circle class="map-pin-dot" cx={point.x} cy={point.y} r="3.5" />
-						</a>
-					) : (
-						<g class="map-pin">
-							<title>{`${point.name} — ${point.description}`}</title>
-							<circle class="map-pin-base" cx={point.x} cy={point.y} r="10" />
-							<circle class="map-pin-dot" cx={point.x} cy={point.y} r="3.5" />
-						</g>
-					),
-				)
-			}
-		</g>
-	</svg>
-	<figcaption
-		class="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-label-xs text-neutral-on-background-weak"
-	>
-		<span class="inline-flex items-center gap-2">
-			<svg width="20" height="4" viewBox="0 0 20 4" aria-hidden="true">
-				<path d="M1 2h18" class="map-legend-line" />
-			</svg>
-			Ruta
-		</span>
-		<span class="inline-flex items-center gap-2">
-			<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
-				<circle cx="7" cy="7" r="5.5" class="map-legend-pin" />
-				<circle cx="7" cy="7" r="2" class="map-legend-dot" />
-			</svg>
-			Historia
-		</span>
-		<span class="ml-auto">
-			Rutas sobre datos de
-			<a
-				href="https://www.openstreetmap.org/copyright"
-				class="map-attribution"
-				target="_blank"
-				rel="noopener noreferrer">OpenStreetMap</a
-			>
-			contributors (vía OSRM)
-		</span>
-	</figcaption>
-</figure>
-
-<style>
-	/* Océano = fondo del figure (bg-neutral-background-weak); tierra un paso más
-	   fuerte para que el continente se lea sobre el "mar" en ambos temas. */
-	.map-land path {
-		fill: var(--neutral-background-medium);
-		stroke: var(--neutral-alpha-strong);
-		stroke-width: 1;
-		vector-effect: non-scaling-stroke;
-	}
-
-	.map-route path {
-		fill: none;
-		stroke-linejoin: round;
-		stroke-linecap: round;
-	}
-
-	/* Casing GPS: separa la línea dorada de las fronteras y de sí misma en
-	   curvas cerradas (más contraste contra la tierra que --page-background). */
-	.map-route-casing {
-		stroke: var(--neutral-background-weak);
-		stroke-width: 6;
-		opacity: 0.9;
-	}
-
-	.map-route-line {
-		stroke: var(--accent-solid-strong);
-		stroke-width: 3;
-	}
-
-	.map-route-core {
-		stroke: var(--page-background);
-		stroke-width: 1;
-		opacity: 0.5;
-	}
-
-	.map-pin {
-		cursor: pointer;
-	}
-
-	.map-pin-base {
-		fill: var(--accent-solid-strong);
-		stroke: var(--page-background);
-		stroke-width: 2;
-		vector-effect: non-scaling-stroke;
-	}
-
-	.map-pin-dot {
-		fill: var(--page-background);
-	}
-
-	a.map-pin:focus-visible {
-		outline: 2px solid var(--accent-solid-strong);
-		outline-offset: 2px;
-	}
-
-	@media (prefers-reduced-motion: no-preference) {
-		.map-pin circle {
-			transform-box: fill-box;
-			transform-origin: center;
-			transition: var(--transition-micro-short);
-		}
-
-		.map-pin:hover circle,
-		.map-pin:focus-visible circle {
-			transform: scale(1.15);
-		}
-	}
-
-	.map-legend-line {
-		stroke: var(--accent-solid-strong);
-		stroke-width: 3;
-		stroke-linecap: round;
-	}
-
-	.map-legend-pin {
-		fill: var(--accent-solid-strong);
-		stroke: var(--page-background);
-		stroke-width: 1.5;
-	}
-
-	.map-legend-dot {
-		fill: var(--page-background);
-	}
-
-	.map-attribution {
-		color: inherit;
-		text-decoration: underline;
-		text-underline-offset: 0.2em;
-		transition: var(--transition-micro-short);
-	}
-
-	.map-attribution:hover {
-		color: var(--accent-on-background-weak);
-	}
-</style>
+<div class="relative rounded-l border border-neutral-alpha-weak bg-neutral-background-weak p-4 sm:p-6" set:html={svgHtml} />
