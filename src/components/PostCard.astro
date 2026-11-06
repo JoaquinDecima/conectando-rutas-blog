@@ -9,9 +9,10 @@ interface Props {
 	headingLevel?: 'h2' | 'h3';
 }
 
-const { post, headingLevel = 'h3' } = Astro.props;
-const Heading = headingLevel;
-const category = CATEGORIES.find((c) => c.slug === post.data.category);
+	const { post, headingLevel = 'h3' } = Astro.props;
+	const Heading = headingLevel;
+	const category = CATEGORIES.find((c) => c.slug === post.data.category);
+	const readingTime = Math.max(1, Math.ceil(post.data.description.length / 200));
 ---
 
 <article
@@ -25,24 +26,31 @@ const category = CATEGORIES.find((c) => c.slug === post.data.category);
 					height={360}
 					src={post.data.heroImage}
 					alt=""
-					class="aspect-2/1 w-full object-cover"
+					class="aspect-2/1 w-full object-cover rounded-m"
 					loading="lazy"
 				/>
 			)
 		}
 		<div class="p-5">
 			<div
-				class="flex flex-wrap items-center gap-2 text-label-s text-neutral-on-background-weak"
+				class="flex flex-wrap items-center gap-2 text-label-xs text-neutral-on-background-weak"
 			>
 				{
 					category && (
-						<span class="rounded-full bg-accent-alpha-weak px-3 py-1 text-label-xs text-accent-on-background-weak">
+						<span class="rounded-full bg-accent-alpha-weak px-3 py-1 text-accent-on-background-weak">
 							{category.label}
 						</span>
 					)
 				}
 				<span><FormattedDate date={post.data.pubDate} /></span>
-				{post.data.country && <span>{post.data.country}</span>}
+				{
+					post.data.country && (
+						<span class="rounded-full bg-accent-alpha-weak px-2 py-0.5 text-accent-on-background-weak">
+							{post.data.country}
+						</span>
+					)
+				}
+				<span>{readingTime} min de lectura</span>
 			</div>
 			<Heading
 				class="mt-2 font-heading text-heading-s text-neutral-on-background-strong transition-colors duration-100 group-hover:text-accent-on-background-weak"

@@ -1,8 +1,10 @@
 ---
 import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PostCard from '../components/PostCard.astro';
 import Icon from '../components/Icon.astro';
+import heroImage from '../assets/blog-placeholder-about.jpg';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 import { slugify } from '../utils/slug';
 
@@ -47,25 +49,33 @@ const highlights = [
 ---
 
 <BaseLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
-	<section class="mx-auto max-w-6xl px-4 pt-20 pb-16 sm:px-6">
-		<div class="max-w-2xl">
+	<section class="relative w-full min-h-[60vh] overflow-hidden">
+		<Image
+			src={heroImage}
+			width={1600}
+			height={900}
+			alt=""
+			aria-hidden="true"
+			loading="eager"
+			class="absolute inset-0 w-full h-full object-cover"
+		/>
+		<div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+		<div class="relative z-10 flex flex-col items-center justify-center h-full max-w-2xl mx-auto px-4 sm:px-6 text-center">
 			<span
 				class="inline-flex items-center gap-2 rounded-full border border-accent-alpha-medium bg-accent-alpha-weak px-3 py-1 text-label-s text-accent-on-background-weak"
 			>
 				<Icon name="compass" size={14} />
 				Blog de viajes y rutas
 			</span>
-			<h1
-				class="mt-6 font-heading text-display-l font-light text-neutral-on-background-strong"
-			>
+			<h1 class="mt-6 font-heading text-display-l font-light text-neutral-on-background-strong">
 				Conectamos rutas,
 				<span class="text-accent-on-background-weak">contamos historias</span>
 			</h1>
-			<p class="mt-6 text-body-l text-neutral-on-background-medium">
+			<p class="mt-6 text-body-m text-neutral-on-background-medium max-w-lg">
 				{SITE_DESCRIPTION} Itinerarios probados, destinos reales y guías prácticas para que
 				cada viaje valga la pena desde el primer kilómetro.
 			</p>
-			<div class="mt-8 flex flex-wrap items-center gap-3">
+			<div class="mt-8 flex flex-wrap items-center justify-center gap-3">
 				<a
 					href="/blog"
 					class="inline-flex items-center gap-2 rounded-full bg-accent-solid-strong px-5 py-2.5 text-label-m font-medium text-accent-on-solid-strong transition-colors duration-100 hover:bg-accent-solid-medium"
@@ -78,12 +88,13 @@ const highlights = [
 					class="inline-flex items-center gap-2 rounded-full border border-neutral-alpha-strong px-5 py-2.5 text-label-m font-medium text-neutral-on-background-strong transition-colors duration-100 hover:bg-neutral-alpha-weak"
 				>
 					Sobre nosotros
+					<Icon name="arrow-right" size={16} />
 				</a>
 			</div>
 		</div>
 	</section>
 
-	<section class="mx-auto max-w-6xl px-4 pb-16 sm:px-6" aria-label="Por qué seguirnos">
+	<section class="mx-auto max-w-7xl px-4 pb-24 sm:px-8" aria-label="Por qué seguirnos">
 		<div class="grid gap-4 sm:grid-cols-3">
 			{
 				highlights.map((item) => (
@@ -103,7 +114,7 @@ const highlights = [
 
 	{
 		topCountries.length > 0 && (
-			<section class="mx-auto max-w-6xl px-4 pb-16 sm:px-6" aria-label="Explora por destino">
+			<section class="mx-auto max-w-7xl px-4 pb-16 sm:px-8" aria-label="Explora por destino">
 				<div class="flex items-end justify-between">
 					<div>
 						<p class="text-label-s text-accent-on-background-weak">Destinos</p>
@@ -135,7 +146,7 @@ const highlights = [
 		)
 	}
 
-	<section class="mx-auto max-w-6xl px-4 pb-20 sm:px-6" aria-label="Últimas publicaciones">
+	<section class="mx-auto max-w-7xl px-4 pb-20 sm:px-8" aria-label="Últimas publicaciones">
 		<div class="flex items-end justify-between">
 			<div>
 				<p class="text-label-s text-accent-on-background-weak">Últimas rutas</p>
@@ -161,7 +172,7 @@ const highlights = [
 		class="border-y border-neutral-alpha-weak bg-neutral-background-weak"
 		aria-label="Nuestro recorrido"
 	>
-		<div class="mx-auto max-w-6xl px-4 py-12 sm:px-6">
+		<div class="mx-auto max-w-7xl px-4 py-12 sm:px-8">
 			<p class="text-label-s text-accent-on-background-weak">El recorrido</p>
 			<h2 class="mt-1 max-w-xl font-heading text-heading-xl text-neutral-on-background-strong">
 				El mapa de nuestro viaje
@@ -180,7 +191,7 @@ const highlights = [
 	</section>
 
 	<section class="border-y border-neutral-alpha-weak bg-neutral-background-weak" aria-label="Sobre nosotros">
-		<div class="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+		<div class="mx-auto max-w-7xl px-4 py-16 sm:px-8">
 			<p class="text-label-s text-accent-on-background-weak">Nosotros</p>
 			<h2 class="mt-1 max-w-xl font-heading text-heading-xl text-neutral-on-background-strong">
 				Una familia, una mochila y muchas rutas por delante
