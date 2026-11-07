@@ -437,57 +437,6 @@ async function main(): Promise<number> {
 		// no crítico
 	}
 
-	// Línea principal: todos los puntos en orden cronológico (sin importar el trip)
-	const allOrdered = [...posts].filter((p) => p.coordinates).sort(
-		(a, b) => new Date(a.pubDate ?? 0).getTime() - new Date(b.pubDate ?? 0).getTime(),
-	);
-	const allCoordinates = allOrdered.map((p) => p.coordinates as LatLon);
-	let allGeometry = cache['todos-viajes'] ?? null;
-	if (!allGeometry) {
-		process.stdout.write(`[map:generate] "todos-viajes": obteniendo de OSRM… `);
-		allGeometry = await fetchSegment('todos-viajes', allCoordinates);
-		if (allGeometry) {
-			freshCache['todos-viajes'] = allGeometry;
-			fetched++;
-			process.stdout.write(`ok, ${allGeometry.length} puntos\n`);
-		} else {
-			failed++;
-			process.stdout.write('falló, usando waypoints directos\n');
-		}
-	} else {
-		process.stdout.write(`[map:generate] "todos-viajes": usando caché (${allGeometry.length} puntos)\n`);
-	}
-
-	const allSimplified = simplifyRoute(allGeometry ?? allCoordinates);
-	const allLine = { type: 'LineString', coordinates: allSimplified.map(([lat, lng]) => [lng, lat]) };
-	const allD = pathFor(allLine, projection);
-
-	const allColorToken = TRIP_COLORS[0]; // Usar el primer color (accent) para la línea principal
-
-	trips.unshift({
-		id: 'todos-viajes',
-		name: 'Todo el recorrido',
-		colorToken: allColorToken,
-		d: allD,
-		points: allOrdered.map((p) => {
-			const [x, y] = projection([p.coordinates[1], p.coordinates[0]]) as [number, number];
-			return {
-				id: `todos-viajes-${slugify(p.name)}`,
-				name: p.name ?? p.file,
-				description: p.description ?? '',
-				country: p.country ?? '',
-				href: `/blog/${slugify(p.file.replace(/\.(md|mdx)$/, ''))}/`,
-				trip: p.trip ?? '',
-				x: round(x, 1),
-				y: round(y, 1),
-			};
-		}),
-	});
-
-	if (allGeometry) {
-		process.stdout.write(`[map:generate] "todos-viajes": simplificado ${allCoordinates.length} → ${allSimplified.length} puntos\n`);
-	}
-
 	if (fetched > 0 || (!cacheExisted && Object.keys(cache).length === 0)) {
 		try {
 			await mkdir(new URL('.', cacheUrl), { recursive: true });
