@@ -6,7 +6,6 @@ category: 'consejos'
 country: 'Argentina'
 region: 'Sudamérica'
 tags: ['rutas', 'familia', 'motorhome', 'conectando-rutas']
-trip: 'Ruta 40 Patagonia'
 coordinates: [-34.6, -58.4]
 ---
 

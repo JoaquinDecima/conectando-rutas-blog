@@ -6,7 +6,7 @@ category: 'itinerarios'
 country: 'Argentina'
 region: 'Patagonia'
 tags: ['patagonia', 'neuquen', 'rio-negro', 'villa-pehuenia', 'villa-traful', 'caleufu', 'viaje-low-cost']
-trip: 'Patagonia 2025'
+trip: 'Ruta 40 Patagonia'
 coordinates: [-41.13, -71.31]
 ---
 
