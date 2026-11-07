@@ -6,6 +6,7 @@ category: 'itinerarios'
 country: 'Argentina'
 region: 'Mendoza'
 tags: ['mendoza', 'cañon-del-atuel', 'rafting', 'viaje-low-cost', 'familia-viajera']
+coordinates: [-34.7, -68.7]
 ---
 
 Como les prometimos, les traemos la primera serie de fotos de nuestro viaje más largo hasta ahora, empezando por el mágico Cañón del Atuel, en Mendoza.

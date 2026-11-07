@@ -4,7 +4,9 @@ description: 'Quiénes somos, cómo empezó este blog de viajes en familia y qu�
 pubDate: 'Jan 10 2025'
 category: 'consejos'
 country: 'Argentina'
+region: 'Sudamérica'
 tags: ['rutas', 'familia', 'motorhome', 'conectando-rutas']
+coordinates: [-34.6, -58.4]
 ---
 
 ¡Bienvenidos a nuestra bitácora de viaje! Detrás de este sueño nómada estamos nosotros cuatro: Sofía, Joaquín, Leandro y Julián. Somos una familia argentina que decidió cambiar las escapadas ocasionales por un proyecto de vida sobre ruedas.

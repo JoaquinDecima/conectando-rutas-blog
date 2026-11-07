@@ -6,6 +6,7 @@ category: 'itinerarios'
 country: 'Argentina'
 region: 'Salta'
 tags: ['salta', 'valles-calchaquies', 'san-carlos', 'invierno-2026', 'viaje-low-cost']
+coordinates: [-24.85, -65.45]
 ---
 
 El viaje fue largo. Las horas en la ruta se sintieron, cada curva y cada kilómetro pesando en el cuerpo. Pero al llegar a San Carlos, en medio de los Valles Calchaquíes, todo cobra sentido.

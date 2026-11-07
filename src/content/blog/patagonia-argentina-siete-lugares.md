@@ -6,6 +6,7 @@ category: 'itinerarios'
 country: 'Argentina'
 region: 'Patagonia'
 tags: ['patagonia', 'neuquen', 'rio-negro', 'villa-pehuenia', 'villa-traful', 'caleufu', 'viaje-low-cost']
+coordinates: [-41.13, -71.31]
 ---
 
 Si buscás inspiración para tu próximo viaje por la Patagonia, esta nota es para vos. Recopilamos siete lugares que nos volaron la cabeza en nuestro recorrido por el sur argentino. Cada uno nos confirmó algo que ya veníamos sospechando: no necesitamos lujos para vivir experiencias de un millón de dólares. La naturaleza lo tiene todo.

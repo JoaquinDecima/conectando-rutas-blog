@@ -1,22 +1,24 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import Icon from '../../components/Icon.astro';
+import PostCard from '../../components/PostCard.astro';
 import { SITE_TITLE } from '../../consts';
-import { slugify } from '../../utils/slug';
 
 const posts = await getCollection('blog');
 
-const regions = new Map<string, Map<string, number>>();
+// Agrupar por país, luego por región
+const countries = new Map<string, Map<string, (typeof posts)[number][]>>();
 for (const post of posts) {
 	const { country, region } = post.data;
-	if (!country || !region) continue;
-	if (!regions.has(region)) regions.set(region, new Map());
-	const countries = regions.get(region)!;
-	countries.set(country, (countries.get(country) ?? 0) + 1);
+	if (!country) continue;
+	if (!countries.has(country)) countries.set(country, new Map());
+	const regions = countries.get(country)!;
+	const key = region ?? '(sin región)';
+	if (!regions.has(key)) regions.set(key, []);
+	regions.get(key)!.push(post);
 }
 
-const sortedRegions = [...regions.entries()].sort((a, b) => a[0].localeCompare(b[0]));
+const sortedCountries = [...countries.entries()].sort((a, b) => a[0].localeCompare(b[0]));
 ---
 
 <BaseLayout
@@ -37,41 +39,43 @@ const sortedRegions = [...regions.entries()].sort((a, b) => a[0].localeCompare(b
 			</p>
 		</div>
 
-		{
-			sortedRegions.map(([region, countries]) => (
-				<section class="mt-12">
-					<div class="border-b border-neutral-alpha-weak pb-3">
-						<h2 class="font-heading text-heading-m text-neutral-on-background-strong">
-							{region}
-						</h2>
-					</div>
-					<div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-						{[...countries.entries()]
-							.sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
-							.map(([country, count]) => (
-								<a
-									href={`/destinos/${slugify(country)}/`}
-									class="group flex items-center justify-between rounded-l border border-neutral-alpha-weak bg-neutral-background-weak p-5 transition-colors duration-100 hover:border-neutral-border-medium"
-								>
-									<span class="flex items-center gap-3">
-										<Icon
-											name="map-pin"
-											size={18}
-											strokeWidth={1.75}
-											class="text-accent-on-background-weak"
-										/>
-										<h3 class="font-heading text-heading-s text-neutral-on-background-strong">
-											{country}
-										</h3>
-									</span>
-									<span class="rounded-full bg-accent-alpha-weak px-3 py-1 text-label-xs text-accent-on-background-weak">
-										{count} {count === 1 ? 'ruta' : 'rutas'}
-									</span>
-								</a>
+		{sortedCountries.map(([country, regions]) => (
+			<section class="mt-12">
+				<div class="border-b border-neutral-alpha-weak pb-3">
+					<h2 class="font-heading text-heading-m text-neutral-on-background-strong">
+						{country}
+					</h2>
+				</div>
+				{regions.size === 1 && (
+					<div class="mt-6 grid gap-6 sm:grid-cols-2">
+						{[...regions.values()]
+							.flat()
+							.map((post) => (
+								<PostCard post={post} headingLevel="h3" />
 							))}
 					</div>
-				</section>
-			))
-		}
+				)}
+				{regions.size > 1 && (
+					<>
+						{[...regions.entries()]
+							.sort((a, b) => a[0].localeCompare(b[0]))
+							.map(([region, regionPosts]) => (
+								<section class="mt-8">
+									<h3
+										class="font-heading text-heading-s text-neutral-on-background-medium mb-4"
+									>
+										{region}
+									</h3>
+									<div class="grid gap-6 sm:grid-cols-2">
+										{regionPosts.map((post) => (
+											<PostCard post={post} headingLevel="h3" />
+										))}
+									</div>
+								</section>
+							))}
+					</>
+				)}
+			</section>
+		))}
 	</section>
 </BaseLayout>
