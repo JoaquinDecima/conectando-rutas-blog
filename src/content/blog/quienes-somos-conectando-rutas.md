@@ -6,6 +6,7 @@ category: 'consejos'
 country: 'Argentina'
 region: 'Sudamérica'
 tags: ['rutas', 'familia', 'motorhome', 'conectando-rutas']
+trip: 'Primeros pasos'
 coordinates: [-34.6, -58.4]
 ---
 

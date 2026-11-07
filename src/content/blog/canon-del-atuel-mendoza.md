@@ -6,6 +6,7 @@ category: 'itinerarios'
 country: 'Argentina'
 region: 'Mendoza'
 tags: ['mendoza', 'cañon-del-atuel', 'rafting', 'viaje-low-cost', 'familia-viajera']
+trip: 'Ruta 40 Patagonia'
 coordinates: [-34.7, -68.7]
 ---
 

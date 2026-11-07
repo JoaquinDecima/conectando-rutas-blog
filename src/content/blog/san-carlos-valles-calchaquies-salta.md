@@ -6,6 +6,7 @@ category: 'itinerarios'
 country: 'Argentina'
 region: 'Salta'
 tags: ['salta', 'valles-calchaquies', 'san-carlos', 'invierno-2026', 'viaje-low-cost']
+trip: 'Salta invierno 2026'
 coordinates: [-24.85, -65.45]
 ---
 

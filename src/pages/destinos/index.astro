@@ -8,15 +8,15 @@ const posts = await getCollection('blog');
 
 // Agrupar por país, luego por región
 const countries = new Map<string, Map<string, (typeof posts)[number][]>>();
-for (const post of posts) {
-	const { country, region } = post.data;
-	if (!country) continue;
-	if (!countries.has(country)) countries.set(country, new Map());
-	const regions = countries.get(country)!;
-	const key = region ?? '(sin región)';
-	if (!regions.has(key)) regions.set(key, []);
-	regions.get(key)!.push(post);
-}
+	for (const post of posts) {
+		const { country, coordinates } = post.data;
+		if (!country || !coordinates) continue;
+		if (!countries.has(country)) countries.set(country, new Map());
+		const regions = countries.get(country)!;
+		const key = post.data.region ?? '(sin región)';
+		if (!regions.has(key)) regions.set(key, []);
+		regions.get(key)!.push(post);
+	}
 
 const sortedCountries = [...countries.entries()].sort((a, b) => a[0].localeCompare(b[0]));
 ---
