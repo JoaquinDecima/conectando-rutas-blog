@@ -56,7 +56,7 @@ function esc(s: string): string {
 			{`
 				.map-route path { vector-effect: non-scaling-stroke; }
 				.map-country { fill: var(--neutral-background-strong); transition: fill var(--transition-micro-medium); }
-				.route-map:hover .map-country { fill: var(--accent-background-medium); }
+				.map-country:hover { fill: var(--accent-background-medium); }
 				.map-pin { cursor: pointer; transition: transform var(--transition-micro-medium); }
 				.map-pin:hover { transform: scale(1.15); }
 				.map-pin:focus-visible { outline: 2px solid var(--accent-solid-strong); outline-offset: 2px; }
@@ -179,7 +179,13 @@ function esc(s: string): string {
 			}, 700);
 		}
 
-		svg.addEventListener('click', function (evt) {
+		var lastWave = 0;
+		var waveInterval = 120; // ms entre ondas para no saturar el DOM
+
+		svg.addEventListener('mousemove', function (evt) {
+			var now = Date.now();
+			if (now - lastWave < waveInterval) return;
+			lastWave = now;
 			var pt = pointerToSvg(evt);
 			createWave(pt.x, pt.y);
 		});
