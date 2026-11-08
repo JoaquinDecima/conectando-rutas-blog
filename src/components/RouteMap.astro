@@ -34,35 +34,97 @@ const countryNames = map.countries.map((c) => c.name).join(' y ');
 function esc(s: string): string {
 	return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
-
-const countryPathsHtml = map.countries
-	.map(
-		(c) =>
-			`<path d="${esc(c.d)}" fill="var(--neutral-background-medium)" stroke="var(--neutral-alpha-strong)" stroke-width="1" vector-effect="non-scaling-stroke" />`
-	)
-	.join('');
-
-const routesHtml = map.trips
-	.map(
-		(trip) =>
-			`<g class="map-route"><path d="${esc(trip.d)}" fill="none" stroke-linejoin="round" stroke-linecap="round" stroke="var(--neutral-background-weak)" stroke-width="6" opacity="0.9" /><path d="${esc(trip.d)}" fill="none" stroke-linejoin="round" stroke-linecap="round" stroke="var(--${trip.colorToken})" stroke-width="3" /></g>`
-	)
-	.join('');
-
-const pinsHtml = map.points
-	.map(
-		(p) =>
-			`<a href="${esc(p.href)}" xlink:href="${esc(p.href)}" class="map-pin" aria-label="${esc(p.name + ' — leer artículo')}"><title>${esc(p.name + ' — ' + p.description)}</title><circle class="map-pin-base" cx="${p.x}" cy="${p.y}" r="10" fill="var(--accent-solid-strong)" stroke="var(--page-background)" stroke-width="2" vector-effect="non-scaling-stroke" /><circle class="map-pin-dot" cx="${p.x}" cy="${p.y}" r="3.5" fill="var(--page-background)" /></a>`
-	)
-	.join('');
-
-const svgHtml = `
-<svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 ${width} ${height}" class="mx-auto h-auto w-auto max-h-[70vh] max-w-full" role="img" aria-label="Mapa de nuestro recorrido por ${esc(countryNames)}: líneas de ruta y puntos que enlazan a las historias del blog">
-	<g class="map-land" aria-hidden="true">${countryPathsHtml}</g>
-	<g class="map-routes" aria-hidden="true">${routesHtml}</g>
-	<g id="map-pins">${pinsHtml}</g>
-</svg>
-`;
-
 ---
-<div class="relative rounded-l border border-neutral-alpha-weak bg-neutral-background-weak p-4 sm:p-6" set:html={svgHtml} />
+
+<section class="max-w-6xl mx-auto px-4 sm:px-6 py-12 lg:py-20">
+	<div class="text-center mb-8">
+		<h2 class="font-heading text-display-m font-light text-neutral-on-background-strong mb-2">El mapa de mis rutas</h2>
+		<p class="text-body-m text-neutral-on-background-medium max-w-2xl mx-auto">
+			Lugares que he visitado y rutas recorridas. Haz clic en cada pin para leer la historia completa.
+		</p>
+	</div>
+
+	<svg
+		xmlns="http://www.w3.org/2000/svg"
+		viewBox={`0 0 ${width} ${height}`}
+		preserveAspectRatio="xMidYMid meet"
+		class="w-full h-full block"
+		aria-label="Mapa de rutas y destinos visitados"
+		role="img"
+	>
+		<style>
+			{`
+				.map-route path { vector-effect: non-scaling-stroke; }
+				.map-pin { cursor: pointer; transition: transform var(--transition-micro-medium); }
+				.map-pin:hover { transform: scale(1.15); }
+				.map-pin:focus-visible { outline: 2px solid var(--accent-solid-strong); outline-offset: 2px; }
+			`}
+		</style>
+
+		<!-- Países de fondo -->
+		{map.countries.map((c) => (
+			<path
+				d={c.d}
+				fill="var(--neutral-background-strong)"
+				stroke="var(--neutral-alpha-strong)"
+				stroke-width="1"
+				vector-effect="non-scaling-stroke"
+			/>
+		))}
+
+		<!-- Rutas -->
+		{map.trips.map((trip) => (
+			<g class="map-route">
+				<path
+					d={trip.d}
+					fill="none"
+					stroke-linejoin="round"
+					stroke-linecap="round"
+					stroke="var(--neutral-background-medium)"
+					stroke-width="6"
+					opacity="0.9"
+				/>
+				<path
+					d={trip.d}
+					fill="none"
+					stroke-linejoin="round"
+					stroke-linecap="round"
+					stroke={`var(--${trip.colorToken})`}
+					stroke-width="3"
+				/>
+			</g>
+		))}
+
+		<!-- Pins -->
+		{map.points.map((p) => (
+			<a
+				href={p.href}
+				class="map-pin"
+				aria-label={esc(p.name + ' — leer artículo')}
+			>
+				<title>{esc(p.name + ' — ' + p.description)}</title>
+				<circle
+					class="map-pin-base"
+					cx={p.x}
+					cy={p.y}
+					r="10"
+					fill="var(--accent-solid-strong)"
+					stroke="var(--page-background)"
+					stroke-width="2"
+					vector-effect="non-scaling-stroke"
+				/>
+				<circle
+					class="map-pin-dot"
+					cx={p.x}
+					cy={p.y}
+					r="3.5"
+					fill="var(--page-background)"
+				/>
+			</a>
+		))}
+	</svg>
+
+	<div class="mt-6 text-body-s text-neutral-on-background-weak">
+		Países mostrados: {countryNames}. Atribución: datos de límites de OpenStreetMap contributors.
+	</div>
+</section>
