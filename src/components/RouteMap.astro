@@ -44,14 +44,15 @@ function esc(s: string): string {
 		</p>
 	</div>
 
-	<svg
-		xmlns="http://www.w3.org/2000/svg"
-		viewBox={`0 0 ${width} ${height}`}
-		preserveAspectRatio="xMidYMid meet"
-		class="w-full h-full block route-map"
-		aria-label="Mapa de rutas y destinos visitados"
-		role="img"
-	>
+	<div class="relative aspect-[4/3] w-full overflow-hidden">
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			viewBox={`0 0 ${width} ${height}`}
+			preserveAspectRatio="xMidYMid meet"
+			class="w-full h-full block route-map"
+			aria-label="Mapa de rutas y destinos visitados"
+			role="img"
+		>
 		<style>
 			{`
 				.map-route path { vector-effect: non-scaling-stroke; }
@@ -145,6 +146,7 @@ function esc(s: string): string {
 			</a>
 		))}
 	</svg>
+	</div>
 
 	<div class="mt-6 text-body-s text-neutral-on-background-weak">
 		Países mostrados: {countryNames}. Atribución: datos de límites de OpenStreetMap contributors.
