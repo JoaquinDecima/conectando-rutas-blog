@@ -48,24 +48,46 @@ function esc(s: string): string {
 		xmlns="http://www.w3.org/2000/svg"
 		viewBox={`0 0 ${width} ${height}`}
 		preserveAspectRatio="xMidYMid meet"
-		class="w-full h-full block"
+		class="w-full h-full block route-map"
 		aria-label="Mapa de rutas y destinos visitados"
 		role="img"
 	>
 		<style>
 			{`
 				.map-route path { vector-effect: non-scaling-stroke; }
+				.map-country { fill: var(--neutral-background-strong); transition: fill var(--transition-micro-medium); }
+				.route-map:hover .map-country { fill: var(--accent-background-medium); }
 				.map-pin { cursor: pointer; transition: transform var(--transition-micro-medium); }
 				.map-pin:hover { transform: scale(1.15); }
 				.map-pin:focus-visible { outline: 2px solid var(--accent-solid-strong); outline-offset: 2px; }
+
+				/* Capa de ondas (agua) por debajo del mapa */
+				.wave-layer { pointer-events: none; }
+				.wave {
+					fill: var(--accent-background-medium);
+					opacity: 0.35;
+					filter: blur(2px);
+					animation: ripple 0.7s ease-out forwards;
+					transform-origin: center center;
+				}
+				@keyframes ripple {
+					0% { r: 0; opacity: 0.45; transform: scale(1); }
+					100% { r: 420; opacity: 0; transform: scale(1); }
+				}
+				@media (prefers-reduced-motion: reduce) {
+					.wave { animation: none; display: none; }
+				}
 			`}
 		</style>
+
+		<!-- Capa de ondas (agua) por debajo de todo -->
+		<g class="wave-layer" id="wave-layer"></g>
 
 		<!-- Países de fondo -->
 		{map.countries.map((c) => (
 			<path
+				class="map-country"
 				d={c.d}
-				fill="var(--neutral-background-strong)"
 				stroke="var(--neutral-alpha-strong)"
 				stroke-width="1"
 				vector-effect="non-scaling-stroke"
@@ -128,3 +150,38 @@ function esc(s: string): string {
 		Países mostrados: {countryNames}. Atribución: datos de límites de OpenStreetMap contributors.
 	</div>
 </section>
+
+<script>
+	(function () {
+		var svg = document.querySelector('.route-map');
+		var layer = document.getElementById('wave-layer');
+		if (!svg || !layer) return;
+
+		function pointerToSvg(evt) {
+			var pt = svg.createSVGPoint();
+			var rect = svg.getBoundingClientRect();
+			var scaleX = svg.viewBox.baseVal.width / rect.width;
+			var scaleY = svg.viewBox.baseVal.height / rect.height;
+			pt.x = (evt.clientX - rect.left) * scaleX;
+			pt.y = (evt.clientY - rect.top) * scaleY;
+			return pt;
+		}
+
+		function createWave(x, y) {
+			var circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+			circle.setAttribute('class', 'wave');
+			circle.setAttribute('cx', x);
+			circle.setAttribute('cy', y);
+			circle.setAttribute('r', 0);
+			layer.appendChild(circle);
+			setTimeout(function () {
+				if (circle.parentNode) circle.parentNode.removeChild(circle);
+			}, 700);
+		}
+
+		svg.addEventListener('click', function (evt) {
+			var pt = pointerToSvg(evt);
+			createWave(pt.x, pt.y);
+		});
+	})();
+</script>
