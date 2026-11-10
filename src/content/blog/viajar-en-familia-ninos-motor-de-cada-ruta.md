@@ -4,6 +4,7 @@ description: 'Por qué cada kilómetro y cada esfuerzo tiene un único motor: lo
 pubDate: 'Aug 20 2026'
 category: 'consejos'
 tags: ['familia', 'ninez', 'viajar-con-ninos', 'infancia']
+heroImage: '../../assets/viaje-en-familia.jpg'
 ---
 
 Llegamos unos días tarde para el saludo oficial, pero para celebrar la infancia no hay calendario que valga.
