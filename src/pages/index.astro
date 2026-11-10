@@ -57,6 +57,7 @@ const highlights = [
 			alt=""
 			aria-hidden="true"
 			loading="eager"
+			fetchpriority="high"
 			class="absolute inset-0 w-full h-full object-cover"
 		/>
 		<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
@@ -79,7 +80,7 @@ const highlights = [
 			<div class="mt-8 flex flex-wrap items-center justify-center gap-3">
 				<a
 					href="blog"
-					class="inline-flex items-center gap-2 rounded-full bg-accent-solid-strong px-5 py-2.5 text-label-m font-medium text-accent-on-solid-strong transition-colors duration-100 hover:bg-accent-solid-medium"
+					class="inline-flex items-center gap-2 rounded-full bg-accent-solid-strong px-5 py-2.5 text-label-m font-medium text-neutral-on-background-strong transition-colors duration-100 hover:bg-accent-solid-medium"
 				>
 					Explorar el blog
 					<Icon name="arrow-right" size={16} />
@@ -103,9 +104,9 @@ const highlights = [
 						<div class="flex h-10 w-10 items-center justify-center rounded-full bg-accent-alpha-weak text-accent-on-background-weak">
 							<Icon name={item.icon} size={20} strokeWidth={1.75} />
 						</div>
-						<h3 class="mt-4 font-heading text-heading-s text-neutral-on-background-strong">
+						<h2 class="mt-4 font-heading text-heading-s text-neutral-on-background-strong">
 							{item.title}
-						</h3>
+						</h2>
 						<p class="mt-2 text-body-s text-neutral-on-background-medium">{item.description}</p>
 					</div>
 				))

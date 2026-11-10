@@ -9,7 +9,7 @@ const posts = (await getCollection('blog'))
 	.slice(0, 10);
 ---
 
-<div class="bg-accent-solid-strong text-accent-on-solid-strong text-xs">
+<div class="bg-accent-solid-strong text-neutral-on-background-strong text-xs">
 	<div class="mx-auto flex max-w-7xl items-center px-4 py-1.5 sm:px-8">
 		<div class="marquee-wrapper relative flex-1 overflow-hidden" aria-label="Últimas publicaciones">
 			<div class="marquee-track flex w-max whitespace-nowrap">
@@ -22,12 +22,13 @@ const posts = (await getCollection('blog'))
 							</span>
 							{posts.map((post, i) => (
 								<span class="mx-3 inline">
-									<a
-										href={`blog/${post.id}/`}
-										class="transition-colors duration-100 hover:text-neutral-on-background-strong"
-									>
-										{post.data.title}
-									</a>
+						<a
+							href={`blog/${post.id}/`}
+							class="transition-colors duration-100 hover:text-neutral-on-background-strong"
+							tabindex={hidden ? -1 : undefined}
+						>
+							{post.data.title}
+						</a>
 									{i < posts.length - 1 && <span class="ml-3 opacity-40">•</span>}
 								</span>
 							))}
@@ -43,10 +44,10 @@ const posts = (await getCollection('blog'))
 						href={social.href}
 						target="_blank"
 						rel="noopener"
-						class="transition-opacity duration-100 hover:opacity-70"
+						class="transition-opacity duration-100 hover:opacity-70 px-2 py-1"
 						aria-label={social.label}
 					>
-						<Icon name={social.icon} size={14} />
+						<Icon name={social.icon} size={20} />
 					</a>
 				))
 			}
