@@ -6,12 +6,12 @@ export const SITE_DESCRIPTION =
 	'Rutas, destinos y consejos de viaje para descubrir el mundo kilómetro a kilómetro.';
 
 export const NAV_LINKS = [
-	{ label: 'Inicio', href: '/' },
-	{ label: 'Blog', href: '/blog' },
-	{ label: 'Destinos', href: '/destinos' },
-	{ label: 'Rutas', href: '/rutas' },
-	{ label: 'Nosotros', href: '/about' },
-	{ label: 'Contacto', href: '/contacto' },
+	{ label: 'Inicio', href: '' },
+	{ label: 'Blog', href: 'blog' },
+	{ label: 'Destinos', href: 'destinos' },
+	{ label: 'Rutas', href: 'rutas' },
+	{ label: 'Nosotros', href: 'about' },
+	{ label: 'Contacto', href: 'contacto' },
 ] as const;
 
 export type CategorySlug = 'itinerarios' | 'consejos' | 'presupuestos' | 'requisitos';
