@@ -3,101 +3,164 @@ import { Image } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Icon from '../components/Icon.astro';
 import { CATEGORIES, SITE_TITLE } from '../consts';
-import aboutImage from '../assets/blog-placeholder-about.jpg';
+import aboutImage from '../assets/nuestra-historia.jpg';
 ---
 
 <BaseLayout
 	title={`Nosotros - ${SITE_TITLE}`}
 	description="Somos la familia viajera detrás de Conectando Rutas: itinerarios reales, presupuestos honestos y consejos para planificar tu próximo viaje."
+	image={aboutImage}
 >
-	<section class="mx-auto max-w-3xl px-4 py-16 sm:px-6">
-		<div class="text-center">
-			<p class="text-label-s text-accent-on-background-weak">Nosotros</p>
-			<h1
-				class="mt-1 font-heading text-display-s font-light text-neutral-on-background-strong"
-			>
-				Viajar es conectar
-			</h1>
-			<p class="mx-auto mt-4 max-w-xl text-body-m text-neutral-on-background-medium">
-				Una familia viajera documentando sus grandes rutas por Latinoamérica, kilómetro a
-				kilómetro.
-			</p>
+	<!-- Hero con imagen de fondo -->
+	<section class="relative w-full h-[55vh] overflow-hidden">
+		<Image
+			src={aboutImage}
+			width={1600}
+			height={900}
+			alt="Nuestra familia en una de las rutas documentadas"
+			aria-hidden="true"
+			loading="eager"
+			class="absolute inset-0 w-full h-full object-cover"
+		/>
+		<div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+		<div class="relative z-10 flex h-full items-center justify-center">
+			<div class="max-w-2xl px-4 sm:px-6 text-center">
+				<span
+					class="inline-flex items-center gap-2 rounded-full border border-accent-alpha-medium bg-accent-alpha-weak px-3 py-1 text-label-s text-accent-on-background-weak"
+				>
+					<Icon name="compass" size={14} />
+					Nosotros
+				</span>
+				<h1 class="mt-6 font-heading text-display-l font-light text-neutral-on-background-strong">
+					Conectamos rutas,
+					<span class="text-accent-on-background-weak">contamos historias</span>
+				</h1>
+				<p class="mt-6 text-body-m text-neutral-on-background-medium max-w-lg mx-auto">
+					Una familia argentina que cambió las escapadas ocasionales por un proyecto de
+					vida sobre ruedas. Kilómetro a kilómetro, documentamos cada ruta para que
+					planificar tu próximo viaje te cueste menos que a nosotros.
+				</p>
+			</div>
 		</div>
+	</section>
 
-		<!-- TODO: reemplazar con la historia real -->
-		<div class="mt-12 grid items-start gap-8 md:grid-cols-2">
+	<section class="mx-auto max-w-6xl px-4 sm:px-6 py-20 lg:py-28">
+		<div class="grid gap-12 lg:gap-24 lg:grid-cols-2 items-center">
+			<div class="space-y-8">
+				<p class="text-label-s text-accent-on-background-weak">Quiénes somos</p>
+				<h2 class="font-heading text-heading-xl font-light text-neutral-on-background-strong">
+					Una familia, una mochila y muchas rutas por delante
+				</h2>
+				<p class="text-body-l text-neutral-on-background-medium leading-relaxed">
+					Detrás de este sueño nómada estamos nosotros cuatro: Sofía, Joaquín, Leandro y
+					Julián. Somos una familia argentina que decidió cambiar las escapadas
+					ocasionales por un proyecto de vida sobre ruedas.
+				</p>
+				<p class="text-body-l text-neutral-on-background-medium leading-relaxed">
+					Sofía arma las rutas y saca las fotos. Joaquín es el conductor oficial y, como
+					él mismo dice, el experto en prender fuego. Leandro tiene 12 años y es nuestro
+					explorador acuático oficial: donde hay agua, él ya está adentro. Y Julián, de 3
+					años, es nuestro pekeviajero, capaz de convertir cualquier parada en una
+					aventura.
+				</p>
+			</div>
 			<div>
 				<Image
 					src={aboutImage}
 					width={960}
-					height={480}
-					alt="Paisaje de una de las rutas documentadas en el blog"
-					class="aspect-4/5 w-full rounded-l border border-neutral-alpha-weak object-cover"
+					height={960}
+					alt="Nuestra familia"
+					class="w-full rounded-xl border border-neutral-alpha-weak object-cover shadow-lg"
 					loading="lazy"
 				/>
 			</div>
-			<div class="space-y-6 text-body-m text-neutral-on-background-medium">
-				<div>
-					<h2 class="font-heading text-heading-m text-neutral-on-background-strong">
-						Quiénes somos
-					</h2>
-					<p class="mt-3">
-						Hola, somos [Nombre] y [Nombre]; con nuestros dos hijos, [Nombre] y [Nombre],
-						y la abuela, que se sumó a la aventura, recorremos Latinoamérica kilómetro a
-						kilómetro. Durante años apilamos destinos en una lista que siempre era «para
-						más adelante», hasta que decidimos empezar de verdad: una mochila por
-						persona, un coche alquilado y las primeras rutas largas que hoy contamos aquí.
-					</p>
-				</div>
-				<div>
-					<h2 class="font-heading text-heading-m text-neutral-on-background-strong">
-						Por qué Conectando Rutas
-					</h2>
-					<p class="mt-3">
-						Al planificar nuestros viajes nos topábamos con lo mismo: guías bonitas pero
-						incompletas, presupuestos irreales y consejos de quien nunca pisó el lugar,
-						y mucho menos con niños y una abuela a bordo. Este blog es nuestra respuesta:
-						contamos cada ruta en primera persona, con aciertos, errores y cifras reales.
-					</p>
-				</div>
-				<div>
-					<h2 class="font-heading text-heading-m text-neutral-on-background-strong">
-						Qué vas a encontrar aquí
-					</h2>
-					<p class="mt-3">
-						Itinerarios día por día, presupuestos desglosados y consejos prácticos que
-						aprendimos sobre la marcha. El blog recién arranca, así que hay pocas rutas
-						publicadas, pero cada una está probada por nosotros de principio a fin.
-					</p>
-					<div class="mt-6 flex flex-wrap gap-3">
-						{
-							CATEGORIES.map((category) => (
-								<a
-									href={`/temas/${category.slug}/`}
-									class="inline-flex items-center gap-2 rounded-full border border-neutral-alpha-weak bg-neutral-background-weak px-4 py-2 text-label-m text-neutral-on-background-strong transition-colors duration-100 hover:border-accent-border-medium hover:text-accent-on-background-weak"
-								>
-									{category.label}
-								</a>
-							))
-						}
-					</div>
-				</div>
-			</div>
+		</div>
+	</section>
+
+	<section class="mx-auto max-w-6xl px-4 sm:px-6 py-20 lg:py-28 border-t border-neutral-alpha-weak">
+		<div class="text-center mb-16">
+			<p class="text-label-s text-accent-on-background-weak">Nuestra historia</p>
+			<h2 class="mt-4 font-heading text-heading-xl font-light text-neutral-on-background-strong">
+				De las escapadas a un proyecto de vida
+			</h2>
 		</div>
 
-		<div class="mt-12 flex flex-wrap items-center justify-center gap-3">
-			<a
-				href="/contacto"
-				class="inline-flex items-center gap-2 rounded-full bg-accent-solid-strong px-5 py-2.5 text-label-m font-medium text-accent-on-solid-strong transition-colors duration-100 hover:bg-accent-solid-medium"
-			>
-				Escríbenos
-				<Icon name="arrow-right" size={16} />
-			</a>
+		<div class="grid gap-8 lg:grid-cols-3">
+			{[
+				{
+					title: 'Escapadas ocasionales',
+					text: 'Durante años apilamos destinos en una lista que siempre era “para más adelante”, hasta que decidimos empezar de verdad.',
+				},
+				{
+					title: 'Una mochila y un coche',
+					text: 'Una mochila por persona, un coche alquilado y las primeras rutas largas que hoy contamos aquí.',
+				},
+				{
+					title: 'El siguiente paso',
+					text: 'Comprar y equipar nuestro propio motorhome para recorrer rutas sin fecha de regreso.',
+				},
+			].map((step) => (
+				<div class="rounded-xl border border-neutral-alpha-weak bg-neutral-background-weak p-8">
+					<h3 class="font-heading text-heading-m text-neutral-on-background-strong mb-4">
+						{step.title}
+					</h3>
+					<p class="text-body-s text-neutral-on-background-medium leading-relaxed">
+						{step.text}
+					</p>
+				</div>
+			))}
+		</div>
+	</section>
+
+	<section class="mx-auto max-w-6xl px-4 sm:px-6 py-20 lg:py-28 text-center">
+		<p class="text-label-s text-accent-on-background-weak">Qué vas a encontrar</p>
+		<h2 class="mt-4 font-heading text-heading-xl font-light text-neutral-on-background-strong mb-12">
+			Itinerarios reales, presupuestos honestos
+		</h2>
+
+		<div class="grid gap-8 lg:grid-cols-3">
+			{[
+				{
+					icon: 'route',
+					title: 'Rutas detalladas',
+					text: 'Itinerarios paso a paso con mapas, distancias y paradas imprescindibles.',
+				},
+				{
+					icon: 'mountain',
+					title: 'Destinos reales',
+					text: 'Lugares que hemos recorrido y comprobado en persona, sin filtros.',
+				},
+				{
+					icon: 'book',
+					title: 'Guías prácticas',
+					text: 'Consejos de presupuesto, transporte y alojamiento para viajar mejor.',
+				},
+			].map((item) => (
+				<div class="flex flex-col items-center rounded-xl border border-neutral-alpha-weak bg-neutral-background-weak p-8 transition-colors duration-100 hover:border-accent-border-medium">
+					<div class="flex h-12 w-12 items-center justify-center rounded-full bg-accent-alpha-weak text-accent-on-background-weak mb-6">
+						<Icon name={item.icon} size={20} strokeWidth={1.75} />
+					</div>
+					<h3 class="font-heading text-heading-s text-neutral-on-background-strong mb-3">
+						{item.title}
+					</h3>
+					<p class="text-body-s text-neutral-on-background-medium leading-relaxed">
+						{item.text}
+					</p>
+				</div>
+			))}
+		</div>
+
+		<div class="mt-16 flex flex-col items-center gap-4">
+			<p class="text-body-m text-neutral-on-background-medium">
+				Tenemos muchísimas historias para contar y queremos que esta comunidad nos ayude a
+				conectar rutas y sueños.
+			</p>
 			<a
 				href="/blog"
-				class="inline-flex items-center gap-2 rounded-full border border-neutral-alpha-strong px-5 py-2.5 text-label-m font-medium text-neutral-on-background-strong transition-colors duration-100 hover:bg-neutral-alpha-weak"
+				class="inline-flex items-center gap-2 rounded-full bg-accent-solid-strong px-5 py-2.5 text-label-m font-medium text-accent-on-solid-strong transition-colors duration-100 hover:bg-accent-solid-medium"
 			>
 				Leer el blog
+				<Icon name="arrow-right" size={16} />
 			</a>
 		</div>
 	</section>
