@@ -23,7 +23,7 @@ const posts = (await getCollection('blog'))
 							{posts.map((post, i) => (
 								<span class="mx-3 inline">
 									<a
-										href={`/blog/${post.id}/`}
+										href={`blog/${post.id}/`}
 										class="transition-colors duration-100 hover:text-neutral-on-background-strong"
 									>
 										{post.data.title}
@@ -60,7 +60,7 @@ const posts = (await getCollection('blog'))
 >
 	<nav class="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-8">
 		<a
-			href="/"
+			href=""
 			class="flex items-center gap-2 font-heading text-heading-s text-neutral-on-background-strong transition-colors duration-100 hover:text-accent-on-background-weak"
 		>
 			<Icon name="compass" size={20} class="text-accent-on-background-weak" strokeWidth={1.75} />
