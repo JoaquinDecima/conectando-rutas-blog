@@ -8,6 +8,7 @@ region: 'Mendoza'
 tags: ['mendoza', 'cañon-del-atuel', 'rafting', 'viaje-low-cost', 'familia-viajera']
 trip: 'Ruta 40 Patagonia'
 coordinates: [-34.7, -68.7]
+heroImage: '../../assets/canon-del-atuel-mendoza.jpg'
 ---
 
 Como les prometimos, les traemos la primera serie de fotos de nuestro viaje más largo hasta ahora, empezando por el mágico Cañón del Atuel, en Mendoza.
