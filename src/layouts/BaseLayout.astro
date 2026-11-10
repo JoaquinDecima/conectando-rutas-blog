@@ -22,7 +22,7 @@ const { title, description, image } = Astro.props;
 >
 	<head>
 		<BaseHead title={title} description={description} image={image} />
-		<base href={import.meta.env.PUBLIC_BASE || '/'} />
+		<base href={import.meta.env.DEV ? '/' : '/conectando-rutas-blog/'} />
 		<script is:inline>
 			(() => {
 				const stored = localStorage.getItem('theme');
