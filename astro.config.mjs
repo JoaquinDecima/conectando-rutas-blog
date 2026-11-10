@@ -7,8 +7,8 @@ import { defineConfig } from 'astro/config';
 
 // https://astro.build/config
 export default defineConfig({
-	site: 'https://example.com',
-	base: import.meta.env.DEV ? '/' : '/conectando-rutas-blog/',
+	site: 'https://joaquindecima.github.io/conectando-rutas-blog/',
+	base: '/conectando-rutas-blog/',
 	integrations: [mdx(), sitemap()],
 	vite: {
 		plugins: [tailwindcss()],

@@ -22,8 +22,10 @@ const { title, description, image } = Astro.props;
 >
 	<head>
 		<BaseHead title={title} description={description} image={image} />
-		<base href={import.meta.env.DEV ? '/' : '/conectando-rutas-blog/'} />
+		<base id="app-base" href="/" />
 		<script is:inline>
+			var b = document.getElementById('app-base');
+			if (b) b.href = location.hostname.endsWith('github.io') ? '/conectando-rutas-blog/' : '/';
 			(() => {
 				const stored = localStorage.getItem('theme');
 				const theme =
